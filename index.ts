@@ -1,5 +1,5 @@
-import fs from 'fs';
-import yargs from 'yargs';
+import * as fs from 'fs';
+import * as yargs from 'yargs';
 import v1Cli from './versions/v1';
 import {CliFnArgs, CliVersion, RunServerArgs, SupportedVersions} from "./shared/types";
 

@@ -4,19 +4,26 @@ on:
     branches:
       - main
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
+    environment: NPM
+    permissions:
+      contents: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Setup Node
-        uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: '14.x'
-          registry-url: 'https://registry.npmjs.org'
-      - name: Install dependencies and build 🔧
-        run: npm ci && npm run build
-      - name: Publish package on NPM 📦
-        run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          node-version: 16.13.1
+      - run: npm i -D
+      - run: npm run test
+      - run: npm run build
+      - name: 'Automated Version Bump'
+        uses: 'phips28/gh-action-bump-version@master'
+        with:
+          minor-wording: 'add,Adds,new'
+          major-wording: 'MAJOR,cut-major'
+          patch-wording: 'patch,fixes,fix,bug'     # Providing patch-wording will override commits
+          # defaulting to a patch bump.
+      - uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}

@@ -1,10 +1,10 @@
-import fs from 'fs';
-import unzipper from 'unzipper';
-import path from 'path';
-import request from 'request';
+import * as fs from 'fs';
+import * as unzipper from 'unzipper';
+import * as path from 'path';
+import * as request from 'request';
 import {SupportedVersions} from "../types";
 import {addMetadata, createMetadataFile} from "./metadata";
-import _ from 'lodash';
+import * as _ from 'lodash';
 
 const TEMP_ZIP_FILE = 'satsuma-project-skeleton.zip';
 

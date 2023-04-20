@@ -1,6 +1,6 @@
 {
-  "name": "satsuma",
   "version": "1.0.1",
+  "name": "@satsuma/satsuma-cli",
   "description": "",
   "main": "index.ts",
   "dependencies": {

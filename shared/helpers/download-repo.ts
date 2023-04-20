@@ -70,15 +70,16 @@ export const download = (versionFolder: SupportedVersions, projectPathPrefix: st
                             }
                         })
                         .on("close", () => {
+                            addMetadata(metadataFile, {version: versionFolder, downloadedFiles: downloadedFiles});
                             const versionFolderPath = path.join(process.cwd(), versionFolder);
                             if (fs.existsSync(versionFolderPath)) {
                                 fs.rmdirSync(versionFolderPath, {recursive: true});
                             }
                             fs.unlinkSync(TEMP_ZIP_FILE);
                         });
+
                 });
 
-                addMetadata(metadataFile, {version: versionFolder, downloadedFiles: downloadedFiles});
             } else {
                 console.error("Failed to download repository from GitHub");
             }

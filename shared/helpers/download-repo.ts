@@ -30,6 +30,8 @@ export const download = (versionFolder: SupportedVersions, projectPathPrefix: st
         fs.mkdirSync(projectPathPrefix);
     }
 
+    const downloadedFiles: string[] = [];
+
     const req = request.get(repoUrl, {followAllRedirects: true})
         .on("response", (response) => {
             // We got a response, check the status code.
@@ -52,14 +54,19 @@ export const download = (versionFolder: SupportedVersions, projectPathPrefix: st
                             if (fileName.endsWith("/") || fileName.endsWith("\\")) {
                                 fs.mkdirSync(filePath.replace(versionFolderPath, './'), {recursive: true});
                             } else {
-                                const subPath = fileName.substring(versionFolderPath.length);
-                                console.log(`📄 ${subPath}`)
-                                const fullPath = [
-                                    process.cwd(),
+                                const subPath = fileName.replace(versionFolderPath, '');
+                                const relativePath: string[] = [
                                     projectPathPrefix,
                                     subPath
                                 ].filter(_.identity);
-                                createFileFromEntry(entry, path.join(...fullPath));
+                                const builtPath = path.join(...relativePath);
+                                console.log(`📄 ${builtPath}`);
+                                downloadedFiles.push(builtPath);
+                                const fullPath = path.join(...[
+                                    process.cwd(),
+                                        ...relativePath
+                                ]);
+                                createFileFromEntry(entry, fullPath);
                             }
                         })
                         .on("close", () => {
@@ -71,7 +78,7 @@ export const download = (versionFolder: SupportedVersions, projectPathPrefix: st
                         });
                 });
 
-                addMetadata(metadataFile, {version: versionFolder});
+                addMetadata(metadataFile, {version: versionFolder, downloadedFiles: downloadedFiles});
             } else {
                 console.error("Failed to download repository from GitHub");
             }

@@ -6,16 +6,16 @@ const v1: CliVersion = {
         download(SupportedVersions.v1);
     },
     deploy: (args) => {
-        console.log('🍊deploy v1', args);
+        console.log('🍊deploy not implemented yet');
     },
     validate: (args) => {
-        console.log('🍊validate v1', args);
+        console.log('🍊validate not implemented yet');
     },
     local: (args) => {
-        console.log('🍊local v1', args);
+        console.log('🍊local not implemented yet');
     },
     codegen: (args) => {
-        console.log('🍊codegen v1', args);
+        console.log('🍊codegen not implemented yet');
     }
 }
 

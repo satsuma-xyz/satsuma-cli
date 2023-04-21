@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import axios from 'axios';
 import * as path from 'path';
+import * as colors from 'colors/safe';
 
 export const checkForNpmUpdates = async () => {
     const packageJsonRaw = fs.readFileSync(path.join(__dirname, '../../package.json')).toString();
@@ -8,16 +9,12 @@ export const checkForNpmUpdates = async () => {
     const packageName = packageJson.name;
     const currentVersion = packageJson.version;
 
-    axios.get(`https://registry.npmjs.org/${packageName}`)
-        .then(response => {
-            const latestVersion = response.data['dist-tags'].latest;
-            if (currentVersion === latestVersion) {
-                console.log(`You're using the latest version of ${packageName} (${currentVersion}).`);
-            } else {
-                console.log(`There's a newer version of ${packageName} available (${latestVersion}).`);
-            }
-        })
-        .catch(error => {
-            console.error(`Error checking ${packageName} version: ${error}`);
-        });
+    try {
+        const response = await axios.get(`https://registry.npmjs.org/${packageName}`)
+        const latestVersion = response.data['dist-tags'].latest;
+        if (currentVersion !== latestVersion) {
+            console.log(colors.red(`\nThere's a newer version of ${(packageName)} available (${latestVersion}).`))
+            console.log(colors.red('Upgrade with: ') + colors.bold(`npx ${packageName}@latest\n\n`));
+        }
+    } catch (err) {}
 }

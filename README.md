@@ -1,1 +1,1 @@
-# custom-querier-codegen
+# Satsuma CLI

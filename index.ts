@@ -104,8 +104,8 @@ if (require.main === module) {
                 command: 'selfupdate',
                 describe: 'Update the Satsuma CLI',
                 handler: async (args) => {
-                    if (! await checkForNpmUpdates(true)) {
-                        child_process.execSync('npx --yes clear-npx-cache && npx --yes @satsuma/cli', {stdio: 'inherit', shell: '/bin/bash'});
+                    if (! await checkForNpmUpdates()) {
+                        child_process.execSync('npx --yes clear-npx-cache && npx --yes @satsuma/cli', {shell: '/bin/bash'});
                     } else {
                         console.log('Already on the latest version!');
                     }

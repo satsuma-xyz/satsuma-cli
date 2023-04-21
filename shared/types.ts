@@ -12,6 +12,7 @@ export interface CliVersion {
     validate: CliFunction;
     local: CliFunction<RunServerArgs>;
     codegen: CliFunction;
+    upgrade: CliFunction;
 }
 
 export enum SupportedVersions {

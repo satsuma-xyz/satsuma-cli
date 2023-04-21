@@ -6,6 +6,7 @@ import v1Cli from './versions/v1';
 import {run} from "./shared/helpers/cli";
 import {CliFnArgs, CliVersion, RunServerArgs, SupportedVersions} from "./shared/types";
 import {checkForNpmUpdates} from "./shared/helpers/npm";
+import * as child_process from "child_process";
 
 const versions: Record<SupportedVersions, CliVersion> = {
     [SupportedVersions.v1]: v1Cli,
@@ -96,6 +97,16 @@ if (require.main === module) {
                         versions[args.cliVersion].codegen(args as unknown as CliFnArgs)
                     } else {
                         throw new Error(`Unsupported version: ${args.cliVersion}`);
+                    }
+                },
+            })
+            .command({
+                command: 'selfupdate',
+                describe: 'Update the Satsuma CLI',
+                handler: async (args) => {
+                    if (! await checkForNpmUpdates(true)) {
+                        const x = child_process.execSync('npx --yes @satsuma/cli@latest selfupdate', {stdio: 'inherit', shell: '/bin/bash'});
+                        console.log(x);
                     }
                 },
             }).parseSync();

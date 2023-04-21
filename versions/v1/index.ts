@@ -16,6 +16,9 @@ const v1: CliVersion = {
     },
     codegen: (args) => {
         console.log('🍊codegen not implemented yet');
+    },
+    upgrade: (args) => {
+        console.log('🍊upgrade not implemented yet');
     }
 }
 

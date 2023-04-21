@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import * as yargs from 'yargs';
 import v1Cli from './versions/v1';
 import {CliFnArgs, CliVersion, RunServerArgs, SupportedVersions} from "./shared/types";
+import {checkForNpmUpdates} from "./shared/helpers/npm";
 
 const versions: Record<SupportedVersions, CliVersion> = {
     [SupportedVersions.v1]: v1Cli,
@@ -32,6 +33,7 @@ const NEWEST_VERSION = 'v1';
 
 if (require.main === module) {
     console.log('🍊 Satsuma CLI version: ', NEWEST_VERSION);
+    checkForNpmUpdates();
     const cliOptions = yargs
         .option('cli-version', {
             alias: 'v',

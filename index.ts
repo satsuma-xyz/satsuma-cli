@@ -101,14 +101,19 @@ if (require.main === module) {
                 },
             })
             .command({
+                command: 'ignore',
+                describe: '',
+                handler: (args) => {
+                },
+            })
+            .command({
                 command: 'selfupdate',
                 describe: 'Update the Satsuma CLI',
                 handler: async (args) => {
-                    if (! await checkForNpmUpdates()) {
-                        child_process.execSync('npx --yes clear-npx-cache && npx --yes @satsuma/cli', {shell: '/bin/bash'});
-                    } else {
-                        console.log('Already on the latest version!');
-                    }
+                    console.log('selfupdateselfupdateselfupdateselfupdate');
+                    try {
+                        child_process.execSync('npx --yes clear-npx-cache; npx --yes @satsuma/cli ignore', {shell: '/bin/bash', stdio : 'pipe'});
+                    } catch {}
                 },
             }).parseSync();
     });

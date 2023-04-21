@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import * as fs from 'fs';
 import * as yargs from 'yargs';
 import v1Cli from './versions/v1';

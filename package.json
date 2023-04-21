@@ -13,7 +13,7 @@
     "yargs": "^17.0.1"
   },
   "bin": {
-    "satsuma-cli": "./index"
+    "satsuma-cli": "./index.js"
   },
   "scripts": {
     "satsuma": "npx ts-node index.ts",

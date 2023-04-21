@@ -2,7 +2,7 @@
   "version": "1.0.7",
   "name": "@satsuma/satsuma-cli",
   "description": "",
-  "main": "index.js",
+  "main": "./index",
   "dependencies": {
     "@types/node": "^16.11.7",
     "lodash": "^4.17.21",
@@ -12,12 +12,23 @@
     "unzipper": "^0.10.11",
     "yargs": "^17.0.1"
   },
-  "bin": "index.js",
+  "bin": {
+    "satsuma": "./index"
+  },
   "scripts": {
     "satsuma": "npx ts-node index.ts",
     "build": "npx tsc index.ts"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/satsuma-xyz/satsuma-cli.git"
+  },
+  "files": [
+    "index.js",
+    "versions/",
+    "shared/"
+  ],
+  "author": "Satsuma 🍊",
   "license": "ISC",
   "devDependencies": {
     "@types/lodash": "^4.14.194",

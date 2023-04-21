@@ -24,6 +24,7 @@
     "url": "https://github.com/satsuma-xyz/satsuma-cli.git"
   },
   "files": [
+    "index.ts",
     "index.js",
     "versions/",
     "shared/"

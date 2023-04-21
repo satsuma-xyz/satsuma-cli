@@ -15,7 +15,7 @@ export const checkForNpmUpdates = async (silent: boolean = false): Promise<boole
         if (currentVersion !== latestVersion) {
             if (!silent) {
                 console.log(colors.red(`\nThere's a newer version of ${(packageName)} available (${latestVersion}).`))
-                console.log(colors.red('Upgrade with: ') + colors.bold(`npx ${packageName}@latest\n\n`));
+                console.log(colors.red('Upgrade with: ') + colors.bold(`npx ${packageName} selfupdate\n\n`));
             }
             return false;
         }

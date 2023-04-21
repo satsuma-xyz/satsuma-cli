@@ -12,9 +12,7 @@
     "unzipper": "^0.10.11",
     "yargs": "^17.0.1"
   },
-  "bin": {
-    "satsuma": "index.ts"
-  },
+  "bin": "index.ts",
   "scripts": {
     "satsuma": "npx ts-node index.ts",
     "build": "npx tsc index.ts"

@@ -98,3 +98,5 @@ if (require.main === module) {
 
     console.log('Exit', cliOptions);
 }
+
+export {};

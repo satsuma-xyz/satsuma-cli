@@ -110,10 +110,11 @@ if (require.main === module) {
                 command: 'selfupdate',
                 describe: 'Update the Satsuma CLI',
                 handler: async (args) => {
-                    console.log('selfupdateselfupdateselfupdateselfupdate');
+                    console.log('Updating Satsuma CLI...');
                     try {
                         child_process.execSync('npx --yes clear-npx-cache; npx --yes @satsuma/cli ignore', {shell: '/bin/bash', stdio : 'pipe'});
                     } catch {}
+                    console.log('Done!');
                 },
             }).parseSync();
     });

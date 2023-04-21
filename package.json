@@ -2,7 +2,6 @@
   "version": "1.0.5",
   "name": "@satsuma/satsuma-cli",
   "description": "",
-  "main": "index.ts",
   "dependencies": {
     "@types/node": "^16.11.7",
     "lodash": "^4.17.21",
@@ -12,13 +11,7 @@
     "unzipper": "^0.10.11",
     "yargs": "^17.0.1"
   },
-  "bin": "index.ts",
-  "scripts": {
-    "satsuma": "npx ts-node index.ts",
-    "build": "npx tsc index.ts"
-  },
-  "author": "",
-  "license": "ISC",
+  "bin": "npx ts-node index.ts",
   "devDependencies": {
     "@types/lodash": "^4.14.194",
     "@types/request": "^2.48.8",

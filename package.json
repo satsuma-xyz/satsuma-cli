@@ -23,7 +23,8 @@
   "bin": {
     "satsuma-cli": "./index.js",
     "satsuma": "./index.js",
-    "cli": "./index.js"
+    "cli": "./index.js",
+    "init": "./index.js"
   },
   "scripts": {
     "satsuma": "npx ts-node index.ts",

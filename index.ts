@@ -31,7 +31,7 @@ const NEWEST_VERSION = 'v1';
 
 
 if (require.main === module) {
-    console.log('🍊 Satsuma CLI');
+    console.log('🍊 Satsuma CLI', NEWEST_VERSION);
     const cliOptions = yargs
         .option('cli-version', {
             alias: 'v',
@@ -95,6 +95,7 @@ if (require.main === module) {
                 }
             },
         }).parseSync();
+    console.log(cliOptions);
 }
 
 export {};

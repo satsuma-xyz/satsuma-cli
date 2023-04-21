@@ -2,7 +2,15 @@
   "version": "1.0.12",
   "name": "@satsuma/satsuma-cli",
   "description": "",
-  "main": "./index",
+  "keywords": [
+    "sastsuma",
+    "🍊",
+    "subgraphs",
+    "subgraph",
+    "ipfs",
+    "graphql"
+  ],
+  "main": "./index.js",
   "dependencies": {
     "@types/node": "^16.11.7",
     "lodash": "^4.17.21",

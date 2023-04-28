@@ -59,9 +59,6 @@ const v1: CliVersion = {
             helpersFile,
         });
 
-        // Compile the satsuma-server.tmp file to javascript
-        child_process.execSync(`npx tsc ${serverPath}`, {cwd: __dirname, stdio : 'pipe'});
-
         // @ts-ignore
         const s = require('./satsuma-server.tmp');
         const server = await s.createServer();

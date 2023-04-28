@@ -30,7 +30,13 @@ const v1: CliVersion = {
                 type: "pg" as "pg",
                 name: "knex",
                 search_path: cliData.entitySchema
-            }
+            },
+            {
+                uri: cliData.metadataDBUri,
+                type: "pg" as "pg",
+                name: "metadata",
+                search_path: "public"
+            },
         ];
         const graphql = [
             {

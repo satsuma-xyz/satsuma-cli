@@ -5,6 +5,7 @@ import * as colors from 'colors/safe';
 
 type SatsumaMetadata = {
     dbUri: string;
+    metadataDBUri: string;
     queryHost: string;
     entitySchema: string;
     nonPartitionedTables: string[];

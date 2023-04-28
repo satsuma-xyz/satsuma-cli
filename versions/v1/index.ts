@@ -60,22 +60,26 @@ const v1: CliVersion = {
         const s = require('./satsuma-server.tmp');
         const server = await s.createServer();
 
-        return new Promise((resolve, reject) => {
-            server.listen().then(({ url }: { url: string }) => {
-                console.log(colors.green(`🍊Satsuma server listening at ${url}`));
+        return new Promise((resolve,) => {
+            const { url } = server.listen();
+            console.log(colors.green(`🍊Satsuma server listening at ${url}`));
 
-                process.on('SIGINT', () => {
-                    console.log('SIGINT received, shutting down server');
-                    server.stop();
+            const shutdownServer = () => {
+                console.log('Shutting down server...');
+                server.stop().then(() => {
+                    console.log('Server stopped.');
                     resolve();
                 });
+            };
 
-                process.on('SIGTERM', () => {
-                    console.log('SIGTERM received, shutting down server');
-                    server.stop();
-                    process.exit();
-                    resolve();
-                });
+            process.on('SIGINT', () => {
+                console.log('Received SIGINT signal.');
+                shutdownServer();
+            });
+
+            process.on('SIGTERM', () => {
+                console.log('Received SIGTERM signal.');
+                shutdownServer();
             });
         });
     },

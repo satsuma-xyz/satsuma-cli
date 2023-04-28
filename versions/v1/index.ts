@@ -62,7 +62,12 @@ const v1: CliVersion = {
 
         console.log('Built', outPath);
         // @ts-ignore. This file is created by the above command
-        const s = await import('./satsuma-server.tmp');
+        let s: any;
+        try {
+            s = await import('./satsuma-server.tmp');
+        } catch (e) {
+            console.error("Got error", e);
+        }
 
         console.log({s});
         const server = await s.createServer();

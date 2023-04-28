@@ -58,6 +58,7 @@ const v1: CliVersion = {
             helpersFile,
         });
 
+        // @ts-ignore. This file is created by the above command
         const s = await import('./satsuma-server.tmp');
         const server = await s.createServer();
 

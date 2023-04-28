@@ -5,3 +5,10 @@ node_modules
 
 *.tmp.ts
 *.tmp.js
+
+.satsuma.json
+versions/**/helpers.*
+versions/**/resolvers.*
+versions/**/typeDefs.*
+versions/**/satsuma-server.*
+custom-queries

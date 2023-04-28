@@ -59,16 +59,13 @@ const v1: CliVersion = {
             helpersFile,
         });
 
-        // Run tsc against the server
-        child_process.execSync(`npx tsc -p ${path.resolve(__dirname, "../../tsconfig.json")}`, {shell: '/bin/bash', stdio : 'pipe'});
-
         // @ts-ignore
         const s = require('./satsuma-server.tmp');
         const server = await s.createServer();
 
-        return new Promise((resolve,) => {
-            const { url } = server.listen();
-            console.log(colors.green(`🍊Satsuma server listening at ${url}`));
+        return new Promise(async (resolve,) => {
+            const {url} = await server.listen();
+            console.log(`🍊Satsuma server listening at ` + colors.green(url));
 
             const shutdownServer = () => {
                 console.log('Shutting down server...');

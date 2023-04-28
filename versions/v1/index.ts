@@ -47,7 +47,6 @@ const v1: CliVersion = {
         const typeDefsFile = path.resolve("./custom-queries/typeDefs.ts")
         const helpersFile = path.resolve("./custom-queries/helpers.ts")
 
-        console.log({databases, graphql, resolverFile, typeDefsFile, helpersFile});
 
         // This will output `./satsuma-server.tmp.ts`
         const outPath = await v1Codegen.server({
@@ -60,7 +59,6 @@ const v1: CliVersion = {
             helpersFile,
         });
 
-        console.log('Built', outPath);
         let s: any;
         try {
             // tsc this
@@ -74,10 +72,7 @@ const v1: CliVersion = {
             console.error("Got error", e);
         }
 
-        console.log({s});
         const server = await s.createServer();
-
-        console.log({server});
 
         return new Promise(async (resolve,) => {
             const {url} = await server.listen();

@@ -47,8 +47,10 @@ const v1: CliVersion = {
         const typeDefsFile = path.resolve("./custom-queries/typeDefs.ts")
         const helpersFile = path.resolve("./custom-queries/helpers.ts")
 
+        console.log({databases, graphql, resolverFile, typeDefsFile, helpersFile});
+
         // This will output `./satsuma-server.tmp.ts`
-        await v1Codegen.server({
+        const outPath = await v1Codegen.server({
             databases,
             graphql,
             tables: {},
@@ -58,9 +60,14 @@ const v1: CliVersion = {
             helpersFile,
         });
 
+        console.log('Built', outPath);
         // @ts-ignore. This file is created by the above command
         const s = await import('./satsuma-server.tmp');
+
+        console.log({s});
         const server = await s.createServer();
+
+        console.log({server});
 
         return new Promise(async (resolve,) => {
             const {url} = await server.listen();

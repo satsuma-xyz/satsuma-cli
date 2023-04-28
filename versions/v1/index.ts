@@ -61,9 +61,9 @@ const v1: CliVersion = {
         });
 
         console.log('Built', outPath);
-        // @ts-ignore. This file is created by the above command
         let s: any;
         try {
+            // @ts-ignore. This file is created by the above command
             s = await import('./satsuma-server.tmp');
         } catch (e) {
             console.error("Got error", e);

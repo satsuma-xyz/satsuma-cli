@@ -64,6 +64,9 @@ const v1: CliVersion = {
         let s: any;
         try {
             // tsc this
+            child_process.execSync(`npx tsc ${outPath.replace("satsuma-server.tmp.ts", "resolvers.ts")} --esModuleInterop`, {shell: '/bin/bash', stdio : 'pipe'});
+            child_process.execSync(`npx tsc ${outPath.replace("satsuma-server.tmp.ts", "helpers.ts")} --esModuleInterop`, {shell: '/bin/bash', stdio : 'pipe'});
+            child_process.execSync(`npx tsc ${outPath.replace("satsuma-server.tmp.ts", "typeDefs.ts")} --esModuleInterop`, {shell: '/bin/bash', stdio : 'pipe'});
             child_process.execSync(`npx tsc ${outPath} --esModuleInterop`, {shell: '/bin/bash', stdio : 'pipe'});
             // @ts-ignore. This file is created by the above command
             s = await import('./satsuma-server.tmp');

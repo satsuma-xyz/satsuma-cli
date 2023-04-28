@@ -18,50 +18,55 @@ const v1: CliVersion = {
         console.log('🍊validate not implemented yet');
     },
     local: async (args) => {
-        const cliData = await getSatsumaMetadata(args.subgraphName, args.versionName, args.deployKey);
-        if (!cliData) {
-            return;
+        // const cliData = await getSatsumaMetadata(args.subgraphName, args.versionName, args.deployKey);
+        // if (!cliData) {
+        //     return;
+        // }
+        //
+        // // Convert into the format that the codegen expects
+        // const databases = [
+        //     {
+        //         uri: cliData.dbUri,
+        //         type: "pg" as "pg",
+        //         name: "knex",
+        //         search_path: cliData.entitySchema
+        //     },
+        //     {
+        //         uri: cliData.metadataDBUri,
+        //         type: "pg" as "pg",
+        //         name: "metadata",
+        //         search_path: "public"
+        //     },
+        // ];
+        // const graphql = [
+        //     {
+        //         uri: cliData.queryHost,
+        //     }
+        // ]
+        //
+        // const resolverFile = path.resolve("./custom-queries/resolvers.ts")
+        // const typeDefsFile = path.resolve("./custom-queries/typeDefs.ts")
+        // const helpersFile = path.resolve("./custom-queries/helpers.ts")
+        //
+        // // This will output `./satsuma-server.tmp.ts`
+        // const serverPath = await v1Codegen.server({
+        //     databases,
+        //     graphql,
+        //     tables: {},
+        //     outputPath: __dirname,
+        //     resolverFile,
+        //     typeDefsFile,
+        //     helpersFile,
+        // });
+        console.log('hi');
+
+        const s = require('./satsuma-server.tmp.js');
+        let server: any;
+        try {
+            server = await s.createServer();
+        } catch (e) {
+            console.log("❌❌❌❌❌❌", e)
         }
-
-        // Convert into the format that the codegen expects
-        const databases = [
-            {
-                uri: cliData.dbUri,
-                type: "pg" as "pg",
-                name: "knex",
-                search_path: cliData.entitySchema
-            },
-            {
-                uri: cliData.metadataDBUri,
-                type: "pg" as "pg",
-                name: "metadata",
-                search_path: "public"
-            },
-        ];
-        const graphql = [
-            {
-                uri: cliData.queryHost,
-            }
-        ]
-
-        const resolverFile = path.resolve("./custom-queries/resolvers.ts")
-        const typeDefsFile = path.resolve("./custom-queries/typeDefs.ts")
-        const helpersFile = path.resolve("./custom-queries/helpers.ts")
-
-        // This will output `./satsuma-server.tmp.ts`
-        const serverPath = await v1Codegen.server({
-            databases,
-            graphql,
-            tables: {},
-            outputPath: __dirname,
-            resolverFile,
-            typeDefsFile,
-            helpersFile,
-        });
-
-        // @ts-ignore
-        const s = require('./satsuma-server.tmp');
-        const server = await s.createServer();
 
         return new Promise(async (resolve,) => {
             const {url} = await server.listen();

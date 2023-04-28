@@ -60,12 +60,12 @@ const v1: CliVersion = {
         // });
         console.log('hi');
 
-        const s = require('./satsuma-server.tmp.js');
+        const s = require('./satsuma-server.tmp');
         let server: any;
         try {
             server = await s.createServer();
         } catch (e) {
-            console.log("❌❌❌❌❌❌", e)
+            console.log("❌❌❌❌❌❌", e);
         }
 
         return new Promise(async (resolve,) => {

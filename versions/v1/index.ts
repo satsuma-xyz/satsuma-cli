@@ -63,6 +63,8 @@ const v1: CliVersion = {
         console.log('Built', outPath);
         let s: any;
         try {
+            // tsc this
+            child_process.execSync(`npx tsc ${outPath} --esModuleInterop`, {shell: '/bin/bash', stdio : 'pipe'});
             // @ts-ignore. This file is created by the above command
             s = await import('./satsuma-server.tmp');
         } catch (e) {

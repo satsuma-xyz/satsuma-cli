@@ -49,7 +49,7 @@ const v1: CliVersion = {
         const helpersFile = path.resolve("./custom-queries/helpers.ts")
 
         // This will output `./satsuma-server.tmp.ts`
-        const path = await v1Codegen.server({
+        const serverPath = await v1Codegen.server({
             databases,
             graphql,
             tables: {},
@@ -60,7 +60,7 @@ const v1: CliVersion = {
         });
 
         // Compile the satsuma-server.tmp file to javascript
-        child_process.execSync(`npx tsc ${path}`, {cwd: __dirname, stdio : 'pipe'});
+        child_process.execSync(`npx tsc ${serverPath}`, {cwd: __dirname, stdio : 'pipe'});
 
         // @ts-ignore
         const s = require('./satsuma-server.tmp');

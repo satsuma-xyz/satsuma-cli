@@ -17,7 +17,7 @@ const createFileFromEntry = (entry: any, filePath: string) => {
     entry.pipe(fs.createWriteStream(filePath));
 }
 
-export const download = (versionFolder: SupportedVersions, projectPathPrefix: string | null = 'custom-queries', repoOwner = 'satsuma-xyz', repoName = 'custom-query-skeleton', branch = 'main', metadataFile = '.satsuma.json') => {
+export const download = async (versionFolder: SupportedVersions, projectPathPrefix: string | null = 'custom-queries', repoOwner = 'satsuma-xyz', repoName = 'custom-query-skeleton', branch = 'main', metadataFile = '.satsuma.json') => {
     const repoUrl = `https://github.com/${repoOwner}/${repoName}/archive/refs/heads/${branch}.zip`
     const rootZipFolder = `${repoName}-${branch}`;
     const versionFolderPath = `${rootZipFolder}/${versionFolder}/`;
@@ -32,56 +32,66 @@ export const download = (versionFolder: SupportedVersions, projectPathPrefix: st
 
     const downloadedFiles: string[] = [];
 
-    axios({
-        url: repoUrl,
-        method: 'get',
-        responseType: 'stream'
-    })
-        .then(response => {
-            createMetadataFile(metadataFile);
-            const file = fs.createWriteStream(TEMP_ZIP_FILE);
-            response.data.pipe(file);
+    try {
+        await new Promise<void>((resolve, reject) => {
+            axios({
+                url: repoUrl,
+                method: 'get',
+                responseType: 'stream'
+            })
+                .then(response => {
+                    createMetadataFile(metadataFile);
+                    const file = fs.createWriteStream(TEMP_ZIP_FILE);
+                    response.data.pipe(file);
 
-            file.on("finish", () => {
-                fs.createReadStream(TEMP_ZIP_FILE)
-                    .pipe(unzipper.Parse())
-                    .on("entry", (entry) => {
-                        const fileName = entry.path;
-                        const filePath = path.join(process.cwd(), fileName);
-                        if (!fileName.startsWith(versionFolderPath)) {
-                            entry.autodrain();
-                            return;
-                        }
+                    file.on("finish", () => {
+                        fs.createReadStream(TEMP_ZIP_FILE)
+                            .pipe(unzipper.Parse())
+                            .on("entry", (entry) => {
+                                const fileName = entry.path;
+                                const filePath = path.join(process.cwd(), fileName);
+                                if (!fileName.startsWith(versionFolderPath)) {
+                                    entry.autodrain();
+                                    return;
+                                }
 
-                        if (fileName.endsWith("/") || fileName.endsWith("\\")) {
-                            fs.mkdirSync(filePath.replace(versionFolderPath, './'), {recursive: true});
-                        } else {
-                            const subPath = fileName.replace(versionFolderPath, '');
-                            const relativePath: string[] = [
-                                projectPathPrefix,
-                                subPath
-                            ].filter(_.identity);
-                            const builtPath = path.join(...relativePath);
-                            console.log(`📄 ${builtPath}`);
-                            downloadedFiles.push(builtPath);
-                            const fullPath = path.join(...[
-                                process.cwd(),
-                                ...relativePath
-                            ]);
-                            createFileFromEntry(entry, fullPath);
-                        }
-                    })
-                    .on("close", () => {
-                        addMetadata(metadataFile, { version: versionFolder, downloadedFiles: downloadedFiles });
-                        const versionFolderPath = path.join(process.cwd(), versionFolder);
-                        if (fs.existsSync(versionFolderPath)) {
-                            fs.rmdirSync(versionFolderPath, { recursive: true });
-                        }
-                        fs.unlinkSync(TEMP_ZIP_FILE);
+                                if (fileName.endsWith("/") || fileName.endsWith("\\")) {
+                                    fs.mkdirSync(filePath.replace(versionFolderPath, './'), {recursive: true});
+                                } else {
+                                    const subPath = fileName.replace(versionFolderPath, '');
+                                    const relativePath: string[] = [
+                                        projectPathPrefix,
+                                        subPath
+                                    ].filter(_.identity);
+                                    const builtPath = path.join(...relativePath);
+                                    console.log(`📄 ${builtPath}`);
+                                    downloadedFiles.push(builtPath);
+                                    const fullPath = path.join(...[
+                                        process.cwd(),
+                                        ...relativePath
+                                    ]);
+                                    createFileFromEntry(entry, fullPath);
+                                }
+                            })
+                            .on("close", () => {
+                                addMetadata(metadataFile, {version: versionFolder, downloadedFiles: downloadedFiles});
+                                const versionFolderPath = path.join(process.cwd(), versionFolder);
+                                if (fs.existsSync(versionFolderPath)) {
+                                    fs.rmdirSync(versionFolderPath, {recursive: true});
+                                }
+                                fs.unlinkSync(TEMP_ZIP_FILE);
+                                resolve();
+                            })
+                            .on("error", (error) => {
+                                reject(error);
+                            });
                     });
-            });
-        })
-        .catch(error => {
-            console.error(`Error downloading repository from GitHub: ${error}`);
+                })
+                .catch(error => {
+                    reject(error);
+                });
         });
+    } catch (error) {
+        throw `Error downloading repository from GitHub: ${error}`;
+    }
 }

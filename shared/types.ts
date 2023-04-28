@@ -1,17 +1,24 @@
+import { CreateServerConfig } from "@satsuma/codegen/versions/v1/types";
+
 export type CliFnArgs = {
     cliVersion: string;
+    [p: string]: any;
 }
 
-export type RunServerArgs = CliFnArgs & {port: string}
+export type WithDeployKey = CliFnArgs & {
+    deployKey: string
+}
 
-type CliFunction<T extends CliFnArgs = CliFnArgs> = (args: T) => void;
+export type RunServerArgs = WithDeployKey & {port: string} & CreateServerConfig;
+
+type CliFunction<T extends CliFnArgs = CliFnArgs> = (args: T) => Promise<void>;
 
 export interface CliVersion {
     init: CliFunction;
-    deploy: CliFunction;
-    validate: CliFunction;
+    deploy: CliFunction<WithDeployKey>;
+    validate: CliFunction<WithDeployKey>;
     local: CliFunction<RunServerArgs>;
-    codegen: CliFunction;
+    codegen: CliFunction<WithDeployKey>;
     upgrade: CliFunction;
 }
 

@@ -1,23 +1,27 @@
 import {CliVersion, SupportedVersions} from "../../shared/types";
 import {download} from "../../shared/helpers/download-repo";
+import v1Codegen from "@satsuma/codegen/versions/v1";
+import {getSatsumaMetadata} from "../../shared/helpers/auth";
 
 const v1: CliVersion = {
-    init: (args) => {
-        download(SupportedVersions.v1);
+    init: async (args) => {
+        await download(SupportedVersions.v1);
     },
-    deploy: (args) => {
+    deploy: async (args) => {
         console.log('🍊deploy not implemented yet');
     },
-    validate: (args) => {
+    validate: async (args) => {
         console.log('🍊validate not implemented yet');
     },
-    local: (args) => {
-        console.log('🍊local not implemented yet');
+    local: async (args) => {
+        const cliData = await getSatsumaMetadata(args.deployKey);
+        console.log({cliData});
+        // await v1Codegen.server(cliData, "./");
     },
-    codegen: (args) => {
-        console.log('🍊codegen not implemented yet');
+    codegen: async (args) => {
+        await v1Codegen.types(args);
     },
-    upgrade: (args) => {
+    upgrade: async (args) => {
         console.log('🍊upgrade not implemented yet');
     }
 }

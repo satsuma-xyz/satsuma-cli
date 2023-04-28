@@ -18,3 +18,8 @@ export const addMetadata = (metadataPath: string, newMetadata: Record<string, an
     }
     fs.writeFileSync(metadataPath, JSON.stringify(metadataObj, null, 2));
 }
+
+export const getMetadata = (metadataPath: string) => {
+    const metadata = fs.readFileSync(metadataPath, 'utf8');
+    return metadata ? JSON.parse(metadata) : {};
+};

@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import * as yargs from 'yargs';
 import v1Cli from './versions/v1';
 import {run} from "./shared/helpers/cli";
-import {CliFnArgs, CliVersion, RunServerArgs, SupportedVersions} from "./shared/types";
+import {CliFnArgs, CliVersion, RunServerArgs, SupportedVersions, WithDeployKey} from "./shared/types";
 import {checkForNpmUpdates} from "./shared/helpers/npm";
 import * as child_process from "child_process";
 
@@ -61,7 +61,7 @@ if (require.main === module) {
                 describe: 'Deploy to Satsuma.xyz 🍊',
                 handler: (args) => {
                     if (checkVersion(args.cliVersion)) {
-                        versions[args.cliVersion].deploy(args as unknown as CliFnArgs)
+                        versions[args.cliVersion].deploy(args as unknown as WithDeployKey)
                     } else {
                         throw new Error(`Unsupported version: ${args.cliVersion}`);
                     }
@@ -72,7 +72,7 @@ if (require.main === module) {
                 describe: 'Validate your custom queries.',
                 handler: (args) => {
                     if (checkVersion(args.cliVersion)) {
-                        versions[args.cliVersion].validate(args as unknown as CliFnArgs)
+                        versions[args.cliVersion].validate(args as unknown as WithDeployKey)
                     } else {
                         throw new Error(`Unsupported version: ${args.cliVersion}`);
                     }
@@ -94,7 +94,7 @@ if (require.main === module) {
                 describe: 'Generate the graphql schema & types.',
                 handler: (args) => {
                     if (checkVersion(args.cliVersion)) {
-                        versions[args.cliVersion].codegen(args as unknown as CliFnArgs)
+                        versions[args.cliVersion].codegen(args as unknown as WithDeployKey)
                     } else {
                         throw new Error(`Unsupported version: ${args.cliVersion}`);
                     }
@@ -103,8 +103,7 @@ if (require.main === module) {
             .command({
                 command: 'ignore',
                 describe: '',
-                handler: (args) => {
-                },
+                handler: (args) => {},
             })
             .command({
                 command: 'selfupdate',

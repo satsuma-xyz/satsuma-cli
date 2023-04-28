@@ -98,9 +98,12 @@ const cliOptions = yargs
 if (require.main === module) {
     run(async () => {
         console.log('🍊 Satsuma CLI version:', NEWEST_VERSION);
-        await checkForNpmUpdates();
 
         const cmd = cliOptions._[0];
+
+        if (cmd !== 'selfupdate') {
+            await checkForNpmUpdates();
+        }
 
         switch (cmd) {
             case 'init':

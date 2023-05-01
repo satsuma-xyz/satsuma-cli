@@ -3,34 +3,25 @@ import {download} from "../../shared/helpers/download-repo";
 import v1Codegen from "@satsuma/codegen/versions/v1";
 import {createServer} from "@satsuma/codegen/versions/v1/template/server";
 import {getSatsumaMetadata} from "../../shared/helpers/auth";
-import * as path from "path";
 import {CreateServerConfig, Database} from "@satsuma/codegen/versions/v1/template/types";
+import {loadCustomerCode} from "./utils";
+import {checkProjectNotExists, validateExports, validateFiles} from "./validations";
 
-const loadCustomerCode = async () => {
-    const resolverFile = path.resolve("./custom-queries/resolvers.ts");
-    let resolvers = {};
-    try {resolvers = (await import(resolverFile)).resolvers} catch {}
-    const typeDefsFile = path.resolve("./custom-queries/typeDefs.ts");
-    let typeDefs = "";
-    try {typeDefs = (await import(typeDefsFile)).typeDefs} catch {}
-    const helpersFile = path.resolve("./custom-queries/helpers.ts");
-    let helpers = {};
-    try {helpers = (await import(helpersFile)).helpers} catch {}
-
-    return {
-        resolvers, typeDefs, helpers,
-        resolverFile, typeDefsFile, helpersFile
-    }
-}
 
 const v1: CliVersion = {
     init: async (args) => {
+        checkProjectNotExists();
         await download(SupportedVersions.v1);
     },
     deploy: async (args) => {
+        validateFiles();
+        await validateExports();
         console.log('🍊deploy not implemented yet');
     },
     validate: async (args) => {
+        validateFiles();
+        await validateExports();
+
         try {
             const {typeDefs, resolvers, helpers, resolverFile, typeDefsFile, helpersFile} = await loadCustomerCode();
             const config: CreateServerConfig = {
@@ -52,6 +43,8 @@ const v1: CliVersion = {
         console.log('✅ Validated successfully');
     },
     local: async (args) => {
+        validateFiles();
+        await validateExports();
         const cliData = await getSatsumaMetadata(args.subgraphName, args.versionName, args.deployKey);
         if (!cliData) {
             return;
@@ -144,6 +137,8 @@ const v1: CliVersion = {
         }
     },
     codegen: async (args) => {
+        validateFiles();
+        await validateExports();
         await v1Codegen.types(args);
     },
     upgrade: async (args) => {

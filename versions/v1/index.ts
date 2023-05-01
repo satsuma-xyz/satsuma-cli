@@ -6,6 +6,23 @@ import {getSatsumaMetadata} from "../../shared/helpers/auth";
 import * as path from "path";
 import {CreateServerConfig, Database} from "@satsuma/codegen/versions/v1/template/types";
 
+const loadCustomerCode = async () => {
+    const resolverFile = path.resolve("./custom-queries/resolvers.ts");
+    let resolvers = {};
+    try {resolvers = (await import(resolverFile)).resolvers} catch {}
+    const typeDefsFile = path.resolve("./custom-queries/typeDefs.ts");
+    let typeDefs = "";
+    try {typeDefs = (await import(typeDefsFile)).typeDefs} catch {}
+    const helpersFile = path.resolve("./custom-queries/helpers.ts");
+    let helpers = {};
+    try {helpers = (await import(helpersFile)).helpers} catch {}
+
+    return {
+        resolvers, typeDefs, helpers,
+        resolverFile, typeDefsFile, helpersFile
+    }
+}
+
 const v1: CliVersion = {
     init: async (args) => {
         await download(SupportedVersions.v1);
@@ -14,7 +31,25 @@ const v1: CliVersion = {
         console.log('🍊deploy not implemented yet');
     },
     validate: async (args) => {
-        console.log('🍊validate not implemented yet');
+        try {
+            const {typeDefs, resolvers, helpers, resolverFile, typeDefsFile, helpersFile} = await loadCustomerCode();
+            const config: CreateServerConfig = {
+                databases: [],
+                graphql: [],
+                resolverFile,
+                typeDefsFile,
+                helpersFile,
+            };
+
+            const server = await createServer(config, typeDefs, resolvers, helpers);
+            await server.listen();
+            await server.stop();
+        } catch (e) {
+            console.error('❌ Error validating', e);
+            process.exit(1);
+        }
+
+        console.log('✅ Validated successfully');
     },
     local: async (args) => {
         const cliData = await getSatsumaMetadata(args.subgraphName, args.versionName, args.deployKey);
@@ -74,18 +109,8 @@ const v1: CliVersion = {
             }
         ];
 
-        // Load custom code
-        const resolverFile = path.resolve("./custom-queries/resolvers.ts");
-        let resolvers = {};
-        try {resolvers = (await import(resolverFile)).resolvers} catch {}
-        const typeDefsFile = path.resolve("./custom-queries/typeDefs.ts");
-        let typeDefs = "";
-        try {typeDefs = (await import(typeDefsFile)).typeDefs} catch {}
-        const helpersFile = path.resolve("./custom-queries/helpers.ts");
-        let helpers = {};
-        try {helpers = (await import(helpersFile)).helpers} catch {}
-
         try {
+            const {typeDefs, resolvers, helpers, resolverFile, typeDefsFile, helpersFile} = await loadCustomerCode();
             const config: CreateServerConfig = {
                 databases,
                 graphql,
@@ -122,7 +147,7 @@ const v1: CliVersion = {
         await v1Codegen.types(args);
     },
     upgrade: async (args) => {
-        console.log('🍊upgrade not implemented yet');
+        console.log('Not possible to update TO v1. Perhaps you mixed up the arguments?')
     }
 }
 

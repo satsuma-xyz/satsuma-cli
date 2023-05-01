@@ -10,6 +10,8 @@ type SatsumaMetadata = {
     entitySchema: string;
     nonPartitionedTables: string[];
     partitionedTables: string[];
+    nonPartitionedTablesBR: string[];
+    entityTablesWithBR: string[];
 };
 
 type ErrorResponse = {

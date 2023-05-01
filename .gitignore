@@ -6,7 +6,7 @@ node_modules
 *.tmp.ts
 *.tmp.js
 
-.satsuma.json
+custom-queries/.satsuma.json
 versions/**/helpers.*
 versions/**/resolvers.*
 versions/**/typeDefs.*

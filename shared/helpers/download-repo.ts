@@ -17,7 +17,7 @@ const createFileFromEntry = (entry: any, filePath: string) => {
     entry.pipe(fs.createWriteStream(filePath));
 }
 
-export const download = async (versionFolder: SupportedVersions, projectPathPrefix: string | null = 'custom-queries', repoOwner = 'satsuma-xyz', repoName = 'custom-query-skeleton', branch = 'main', metadataFile = '.satsuma.json') => {
+export const download = async (versionFolder: SupportedVersions, projectPathPrefix: string | undefined = 'custom-queries', repoOwner = 'satsuma-xyz', repoName = 'custom-query-skeleton', branch = 'main', metadataFile = '.satsuma.json') => {
     const repoUrl = `https://github.com/${repoOwner}/${repoName}/archive/refs/heads/${branch}.zip`
     const rootZipFolder = `${repoName}-${branch}`;
     const versionFolderPath = `${rootZipFolder}/${versionFolder}/`;
@@ -40,7 +40,7 @@ export const download = async (versionFolder: SupportedVersions, projectPathPref
                 responseType: 'stream'
             })
                 .then(response => {
-                    createMetadataFile(metadataFile);
+                    createMetadataFile(path.join(projectPathPrefix, metadataFile));
                     const file = fs.createWriteStream(TEMP_ZIP_FILE);
                     response.data.pipe(file);
 

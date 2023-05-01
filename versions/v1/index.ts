@@ -6,6 +6,8 @@ import {getSatsumaMetadata} from "../../shared/helpers/auth";
 import {CreateServerConfig, Database} from "@satsuma/codegen/versions/v1/template/types";
 import {loadCustomerCode} from "./utils";
 import {checkProjectNotExists, validateExports, validateFiles} from "./validations";
+import {getDeployKey} from "../../shared/helpers/metadata";
+import * as path from "path";
 
 
 const v1: CliVersion = {
@@ -16,11 +18,13 @@ const v1: CliVersion = {
     deploy: async (args) => {
         validateFiles();
         await validateExports();
+        const deployKey = args.deployKey || getDeployKey(path.join(process.cwd(), '.satsuma.json'));
         console.log('🍊deploy not implemented yet');
     },
     validate: async (args) => {
         validateFiles();
         await validateExports();
+        const deployKey = args.deployKey || getDeployKey(path.join(process.cwd(), '.satsuma.json'));
 
         try {
             const {typeDefs, resolvers, helpers, resolverFile, typeDefsFile, helpersFile} = await loadCustomerCode();
@@ -45,7 +49,8 @@ const v1: CliVersion = {
     local: async (args) => {
         validateFiles();
         await validateExports();
-        const cliData = await getSatsumaMetadata(args.subgraphName, args.versionName, args.deployKey);
+        const deployKey = args.deployKey || getDeployKey(path.join(process.cwd(), '.satsuma.json'));
+        const cliData = await getSatsumaMetadata(args.subgraphName, args.versionName, deployKey);
         if (!cliData) {
             return;
         }

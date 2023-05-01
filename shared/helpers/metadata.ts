@@ -23,3 +23,7 @@ export const getMetadata = (metadataPath: string) => {
     const metadata = fs.readFileSync(metadataPath, 'utf8');
     return metadata ? JSON.parse(metadata) : {};
 };
+
+export const getDeployKey = (metadataPath: string) => {
+    return getMetadata(metadataPath).deployKey;
+}

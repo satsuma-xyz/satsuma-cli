@@ -67,17 +67,6 @@ const v1: CliVersion = {
                 search_path: cliData.entitySchema,
                 tables: {}
             },
-            {
-                uri: cliData.metadataDBUri,
-                type: "pg" as "pg",
-                name: "metadata",
-                search_path: "public",
-                tables: {
-                    "Organizations": {
-                        actualName: "Organization",
-                    }
-                }
-            },
         ];
         const graphql = [
             {

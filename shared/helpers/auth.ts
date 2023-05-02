@@ -40,7 +40,7 @@ export const getSatsumaMetadata = async (subgraphName?: string, versionName?: st
         const headers: AxiosRequestHeaders['headers'] = {
             Authorization: `Bearer ${deployKey}`
         };
-        const url = `http://localhost:3001/api/cli/data?${stringify({subgraphName, versionName})}`
+        const url = `https://app.satsuma.xyz/api/cli/data?${stringify({subgraphName, versionName})}`
         const result = await axios.get(url, {
             headers
         });

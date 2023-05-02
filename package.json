@@ -30,7 +30,7 @@
   "bin": "./index.js",
   "scripts": {
     "satsuma": "npx ts-node index.ts",
-    "build": "npx tsc index.ts && chmod 755 index.js"
+    "build": "npx tsc index.ts --esModuleInterop && chmod 755 index.js"
   },
   "repository": {
     "type": "git",

@@ -19,11 +19,12 @@ export const loadCustomerCode = async () => {
         typeDefs = (await import(typeDefsFile)).typeDefs
     } catch {
     }
-    const helpersFile = path.resolve("./custom-queries/helpers.ts");
+    let helpersFile: string | undefined = path.resolve("./custom-queries/helpers.ts");
     let helpers = {};
     try {
         helpers = (await import(helpersFile)).helpers
     } catch {
+        helpersFile = undefined;
     }
 
     return {

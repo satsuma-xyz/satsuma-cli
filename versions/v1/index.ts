@@ -6,9 +6,19 @@ import {getSatsumaMetadata} from "../../shared/helpers/auth";
 import {CreateServerConfig, Database} from "@satsuma/codegen/versions/v1/template/types";
 import {loadCustomerCode} from "./utils";
 import {checkProjectNotExists, validateExports, validateFiles} from "./validations";
-import {getDeployKey} from "../../shared/helpers/metadata";
+import {getDeployKey, getMetadata} from "../../shared/helpers/metadata";
 import * as path from "path";
+import * as fs from "fs";
+import axios from "axios";
+import spinners from "cli-spinners";
+import ora from "ora";
 
+const MD_PATH = path.resolve(process.cwd(), '.satsuma.json');
+
+interface DownloadedFile {
+    fileName: string;
+    fileContents: string;
+}
 
 const v1: CliVersion = {
     init: async (args) => {
@@ -18,13 +28,44 @@ const v1: CliVersion = {
     deploy: async (args) => {
         validateFiles();
         await validateExports();
-        const deployKey = args.deployKey || getDeployKey(path.join(process.cwd(), '.satsuma.json'));
-        console.log('🍊deploy not implemented yet');
+        const deployKey = args.deployKey || getDeployKey(MD_PATH);
+        const md = await getMetadata(MD_PATH);
+        if (!md) {
+            console.log('❌ Error: No metadata found. Did you run satsuma init?');
+            process.exit(1);
+        }
+
+        const spinner = ora({
+            text: 'Deploying',
+            spinner: spinners.moon
+        }).start();
+
+        const cliData = await getSatsumaMetadata(md.subgraphName, md.versionName, deployKey);
+        if (!cliData) {
+            spinner.fail(); // The error message is logged in getSatsumaMetadata
+            return;
+        }
+
+        const {resolverFile, typeDefsFile, helpersFile} = await loadCustomerCode();
+        const downloadedFiles: DownloadedFile[] = ([resolverFile, typeDefsFile, helpersFile].filter(Boolean) as string[]).map((file) => ({
+            fileName: path.basename(file),
+            fileContents: fs.readFileSync(file, 'utf8'),
+        }));
+
+        try {
+            const response = await axios.post('https://app.satsuma.xyz/api/cli/upload', {
+                files: downloadedFiles,
+            });
+            spinner.succeed('Uploaded files successfully');
+        } catch (error) {
+            spinner.fail('Error uploading files');
+            process.exit(1);
+        }
     },
     validate: async (args) => {
         validateFiles();
         await validateExports();
-        const deployKey = args.deployKey || getDeployKey(path.join(process.cwd(), '.satsuma.json'));
+        const deployKey = args.deployKey || getDeployKey(MD_PATH);
 
         try {
             const {typeDefs, resolvers, helpers, resolverFile, typeDefsFile, helpersFile} = await loadCustomerCode();
@@ -49,7 +90,7 @@ const v1: CliVersion = {
     local: async (args) => {
         validateFiles();
         await validateExports();
-        const deployKey = args.deployKey || getDeployKey(path.join(process.cwd(), '.satsuma.json'));
+        const deployKey = args.deployKey || getDeployKey(MD_PATH);
         const cliData = await getSatsumaMetadata(args.subgraphName, args.versionName, deployKey);
         if (!cliData) {
             return;

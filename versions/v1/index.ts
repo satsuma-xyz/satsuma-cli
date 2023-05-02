@@ -40,7 +40,7 @@ const v1: CliVersion = {
             spinner: spinners.moon
         }).start();
 
-        const cliData = await getSatsumaMetadata(md.subgraphName, md.versionName, deployKey);
+        const cliData = await getSatsumaMetadata(args.subgraphName, args.versionName, deployKey);
         if (!cliData) {
             spinner.fail(); // The error message is logged in getSatsumaMetadata
             return;

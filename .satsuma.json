@@ -1,0 +1,9 @@
+{
+  "version": "v1",
+  "downloadedFiles": [
+    "helpers.ts",
+    "resolvers.ts",
+    "typeDefs.ts"
+  ],
+  "projectPathPrefix": "custom-queries/"
+}

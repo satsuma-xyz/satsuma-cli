@@ -1,7 +1,7 @@
 import {getMetadata} from "./metadata";
 import axios, {AxiosRequestHeaders} from "axios";
 import {stringify} from "query-string";
-import * as colors from 'colors/safe';
+import colors from 'colors/safe';
 
 type SatsumaMetadata = {
     dbUri: string;

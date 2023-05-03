@@ -50,9 +50,8 @@
   "scripts": {
     "satsuma": "npx ts-node index.ts",
     "build": "npx tsc index.ts --esModuleInterop && chmod 755 index.js",
-    "test": "NODE_ENV=test ./node_modules/.bin/jest --runInBand",
-    "lint": "eslint --cache --max-warnings 0 .",
-    "lint:fix": "eslint . --fix",
+    "test": "NODE_ENV=test ./node_modules/.bin/jest --runInBand --passWithNoTests",
+    "lint": "eslint --cache --max-warnings 0 \"**/*.{ts,tsx}\"",
     "typecheck": "tsc --project tsconfig.json --noEmit"
   },
   "repository": {

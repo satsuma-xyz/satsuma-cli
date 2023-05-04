@@ -2,27 +2,46 @@ import * as fs from 'fs';
 import * as unzipper from 'unzipper';
 import * as path from 'path';
 import * as _ from 'lodash';
-import { SupportedVersions } from "../types";
-import { addMetadata, createMetadataFile } from "./metadata";
+import {SupportedVersions} from "../types";
+import {addMetadata, createMetadataFile} from "./metadata";
 import axios from 'axios';
-import * as spinners from 'cli-spinners';
 import ora from 'ora';
+import {checkProjectNotExists} from "../../versions/v1/validations";
 
 const TEMP_ZIP_FILE = 'satsuma-project-skeleton.zip';
 
-const createFileFromEntry = (entry: any, filePath: string) => {
-    if (fs.existsSync(filePath)) {
+const createFileFromEntry = (entry: any, filePath: string, reset = false) => {
+    if (fs.existsSync(filePath) && !reset) {
         entry.autodrain();
         return;
     }
     entry.pipe(fs.createWriteStream(filePath));
 }
 
-export const download = async (versionFolder: SupportedVersions, projectPathPrefix: string | undefined = 'custom-queries', repoOwner = 'satsuma-xyz', repoName = 'custom-query-skeleton', branch = 'main', metadataFile = '.satsuma.json') => {
-    const spinner = ora({
-        text: 'Downloading files',
-        spinner: spinners.moon
-    }).start();
+export const download = async (
+    {
+        versionFolder,
+        projectPathPrefix = 'custom-queries',
+        repoOwner = 'satsuma-xyz',
+        repoName = 'custom-query-skeleton',
+        branch = 'main',
+        metadataFile = path.resolve(process.cwd(), '.satsuma.json'),
+        spinner,
+        reset = false
+    }: {
+        versionFolder: SupportedVersions;
+        projectPathPrefix?: string;
+        repoOwner?: string;
+        repoName?: string;
+        branch?: string;
+        metadataFile?: string;
+        spinner?: ora.Ora;
+        reset?: boolean;
+    }
+) => {
+    if (!reset) {
+        checkProjectNotExists();
+    }
 
     const repoUrl = `https://github.com/${repoOwner}/${repoName}/archive/refs/heads/${branch}.zip`
     const rootZipFolder = `${repoName}-${branch}`;
@@ -34,11 +53,20 @@ export const download = async (versionFolder: SupportedVersions, projectPathPref
 
     if (projectPathPrefix) {
         try {
-            fs.mkdirSync(projectPathPrefix);
+            if (spinner) {
+                spinner.text = `Creating directory ./${projectPathPrefix}`;
+            }
+            fs.mkdirSync(projectPathPrefix, {recursive: reset});
         } catch {
-            spinner.fail(`Project already exists in this directory. You must remove the ./${projectPathPrefix} directory before initializing`);
+            if (spinner) {
+                spinner.fail(`Project already exists in this directory. You must remove the ./${projectPathPrefix} directory before initializing`);
+            }
             process.exit(1);
         }
+    }
+
+    if (spinner) {
+        spinner.text = `Fetching files from github: ${repoUrl}`;
     }
 
     const downloadedFiles: string[] = [];
@@ -51,7 +79,7 @@ export const download = async (versionFolder: SupportedVersions, projectPathPref
                 responseType: 'stream'
             })
                 .then(response => {
-                    createMetadataFile(path.join(process.cwd(), metadataFile));
+                    createMetadataFile(path.join(metadataFile));
                     const file = fs.createWriteStream(TEMP_ZIP_FILE);
                     response.data.pipe(file);
 
@@ -79,17 +107,19 @@ export const download = async (versionFolder: SupportedVersions, projectPathPref
                                         process.cwd(),
                                         ...relativePath
                                     ]);
-                                    createFileFromEntry(entry, fullPath);
+                                    createFileFromEntry(entry, fullPath, reset);
                                 }
                             })
                             .on("close", () => {
-                                addMetadata(metadataFile, {version: versionFolder, downloadedFiles: downloadedFiles, projectPathPrefix});
-                                const versionFolderPath = path.join(process.cwd(), versionFolder);
-                                if (fs.existsSync(versionFolderPath)) {
-                                    fs.rmdirSync(versionFolderPath, {recursive: true});
-                                }
+                                addMetadata(metadataFile, {
+                                    version: versionFolder,
+                                    downloadedFiles: downloadedFiles,
+                                    projectPathPrefix
+                                });
                                 fs.unlinkSync(TEMP_ZIP_FILE);
-                                spinner.succeed(`Downloaded files to ${projectPathPrefix}`);
+                                if (spinner) {
+                                    spinner.succeed(`Downloaded files to ./${projectPathPrefix}`);
+                                }
                                 resolve();
                             })
                             .on("error", (error) => {
@@ -98,10 +128,15 @@ export const download = async (versionFolder: SupportedVersions, projectPathPref
                     });
                 })
                 .catch(error => {
+                    if (spinner){
+                        spinner.fail(`Error downloading repository from GitHub: ${error}`);
+                    }
                     reject(error);
                 });
         });
     } catch (error) {
-        throw `Error downloading repository from GitHub: ${error}`;
+        if (spinner){
+            spinner.fail(`Error downloading repository from GitHub: ${error}`);
+        }
     }
 }

@@ -2,6 +2,7 @@ import {getMetadata} from "./metadata";
 import axios, {AxiosRequestHeaders} from "axios";
 import {stringify} from "query-string";
 import colors from 'colors/safe';
+import ora from "ora";
 
 type SatsumaMetadata = {
     dbUri: string;
@@ -29,6 +30,8 @@ const isErrorResponse = (response: CliDataResponse): response is ErrorResponse =
 }
 
 export const getSatsumaMetadata = async (subgraphName?: string, versionName?: string, deployKey?: string): Promise<SatsumaMetadata | undefined> => {
+    const spinner = ora({text: 'Fetching data from Satsuma API', spinner: "moon"}).start();
+
     if (!deployKey) {
         const md = getMetadata('.satsuma.json');
         if (md.deployKey) {
@@ -46,7 +49,7 @@ export const getSatsumaMetadata = async (subgraphName?: string, versionName?: st
         });
 
         if (isErrorResponse(result.data)) {
-            console.log("Error response from Satsuma API:")
+            spinner.fail("Error response from Satsuma API:")
             console.log(colors.red(result.data.message))
             if (result.data.availableSubgraphs) {
                 console.log("- Available subgraphs:")
@@ -64,6 +67,7 @@ export const getSatsumaMetadata = async (subgraphName?: string, versionName?: st
             return;
         }
 
+        spinner.succeed()
         return result.data;
     } catch (e) {
         console.error(e);

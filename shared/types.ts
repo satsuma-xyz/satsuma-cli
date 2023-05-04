@@ -5,11 +5,13 @@ export type CliFnArgs = {
     [p: string]: any;
 }
 
-export type WithDeployKey = CliFnArgs & {
-    deployKey: string
+export type InitArgs = CliFnArgs & {
+    path: string;
+    reset?: boolean;
 }
 
-export type WithSubgraphData = WithDeployKey & {
+export type WithSubgraphData = CliFnArgs & {
+    deployKey: string
     subgraphName?: string;
     versionName?: string;
 }
@@ -19,9 +21,9 @@ export type RunServerArgs = WithSubgraphData & {port: string} & CreateServerConf
 type CliFunction<T extends CliFnArgs = CliFnArgs> = (args: T) => Promise<void>;
 
 export interface CliVersion {
-    init: CliFunction;
+    init: CliFunction<InitArgs>;
     deploy: CliFunction<WithSubgraphData>;
-    validate: CliFunction<WithDeployKey>;
+    validate: CliFunction<WithSubgraphData>;
     local: CliFunction<RunServerArgs>;
     codegen: CliFunction<WithSubgraphData>;
     upgrade: CliFunction;

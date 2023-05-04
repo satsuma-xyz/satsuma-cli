@@ -27,3 +27,7 @@ export const getMetadata = (metadataPath: string) => {
 export const getDeployKey = (metadataPath: string) => {
     return getMetadata(metadataPath).deployKey;
 }
+
+export const getCustomQueryPath = (metadataPath: string) => {
+    return getMetadata(metadataPath).projectPathPrefix;
+}

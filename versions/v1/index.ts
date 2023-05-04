@@ -2,9 +2,10 @@ import {CliVersion, SupportedVersions} from "../../shared/types";
 import {download} from "../../shared/helpers/download-repo";
 import v1Codegen from "@satsuma/codegen/versions/v1";
 import {createServer} from "@satsuma/codegen/versions/v1/template/server";
+import {generateServer} from "@satsuma/codegen/versions/v1/create-server-files";
 import {getSatsumaMetadata} from "../../shared/helpers/auth";
 import {CreateServerConfig, Database} from "@satsuma/codegen/versions/v1/template/types";
-import {loadCustomerCode} from "./utils";
+import {loadCustomerCode, satsumaMetadataConfig} from "./utils";
 import {checkProjectNotExists, validateExports, validateFiles} from "./validations";
 import {getDeployKey, getMetadata} from "../../shared/helpers/metadata";
 import * as path from "path";
@@ -12,6 +13,7 @@ import * as fs from "fs";
 import axios from "axios";
 import spinners from "cli-spinners";
 import ora from "ora";
+import {ApolloServer} from 'apollo-server';
 
 const MD_PATH = path.resolve(process.cwd(), '.satsuma.json');
 
@@ -22,8 +24,16 @@ interface DownloadedFile {
 
 const v1: CliVersion = {
     init: async (args) => {
-        checkProjectNotExists();
-        await download(SupportedVersions.v1);
+        const spinner = ora({
+            text: 'Downloading files',
+            spinner: spinners.moon
+        }).start();
+
+        await download({
+            versionFolder: SupportedVersions.v1,
+            spinner,
+            reset: Boolean(args.reset)
+        });
     },
     deploy: async (args) => {
         validateFiles();
@@ -65,6 +75,11 @@ const v1: CliVersion = {
     validate: async (args) => {
         validateFiles();
         await validateExports();
+        const spinner = ora({
+            text: 'Validating',
+            spinner: spinners.moon
+        });
+
         const deployKey = args.deployKey || getDeployKey(MD_PATH);
 
         try {
@@ -81,106 +96,95 @@ const v1: CliVersion = {
             await server.listen();
             await server.stop();
         } catch (e) {
-            console.error('❌ Error validating', e);
+            spinner.fail(`Validation Failed ${e}`);
             process.exit(1);
         }
 
-        console.log('✅ Validated successfully');
+        spinner.succeed("Validation Passed")
     },
     local: async (args) => {
         validateFiles();
         await validateExports();
+        let spinner = ora({
+            spinner: spinners.moon
+        });
         const deployKey = args.deployKey || getDeployKey(MD_PATH);
-        const cliData = await getSatsumaMetadata(args.subgraphName, args.versionName, deployKey);
+
+        spinner.text = "Getting metadata";
+        const cliData = await satsumaMetadataConfig(deployKey, args.subgraphName, args.versionName);
         if (!cliData) {
+            spinner.fail();
             return;
         }
+        spinner.succeed();
 
-        const tables: Database['tables'] = {};
+        let server: ApolloServer;
 
-        // Non-partitioned tables with block range column
-        for (const table of cliData.nonPartitionedTablesBR) {
-            tables[`${table}__all`] = {
-                actualName: table,
-            };
-            tables[table] = {
-                actualName: table,
-                whereClause: `block_range @> 2147483647`,
-            };
-        }
-
-        // Non-partitioned tables without block range column. Usually immutable.
-        for (const table of cliData.nonPartitionedTables) {
-            if (tables[table]) {
-                // Must have been added already with block range
-                continue;
-            }
-
-            // Tables with no block range column we just provide the whole thing as if it's active
-            tables[table] = {
-                actualName: table,
-            };
-        }
-
-        // Partitioned tables always have block range column. That's what the partition is on
-        for (const table of cliData.partitionedTables) {
-            tables[table] = {
-                actualName: `${table}_active`,
-            };
-            tables[`${table}__all`] = {
-                actualName: `${table}_inactive`,
-            };
-        }
-
-        // Convert into the format that the codegen expects
-        const databases: CreateServerConfig['databases'] = [
-            {
-                uri: cliData.dbUri,
-                type: "pg" as "pg",
-                name: "knex",
-                search_path: cliData.entitySchema,
-                tables: {}
-            },
-        ];
-        const graphql = [
-            {
-                uri: cliData.queryHost,
-            }
-        ];
-
-        try {
-            const {typeDefs, resolvers, helpers, resolverFile, typeDefsFile, helpersFile} = await loadCustomerCode();
-            const config: CreateServerConfig = {
-                databases,
-                graphql,
-                resolverFile,
-                typeDefsFile,
-                helpersFile,
-            };
-
-            const server = await createServer(config, typeDefs, resolvers, helpers);
-            return new Promise(async (resolve,) => {
-                const {url} = await server.listen();
-                console.log(`🍊Satsuma server listening at ${url}`);
-
-                const shutdownServer = () => {
-                    console.log('Shutting down server...');
+        const shutdownServer = () => {
+            return new Promise<void>(async (resolve) => {
+                spinner.text = 'Shutting down server...';
+                if (server) {
                     server.stop().then(() => {
-                        process.exit(0);
+                        spinner.info("Server shut down");
+                        resolve();
                     });
-                };
-
-                process.on('SIGINT', () => {
-                    shutdownServer();
-                });
-
-                process.on('SIGTERM', () => {
-                    shutdownServer();
-                });
+                } else {
+                    spinner.info("Server shut down");
+                }
+                resolve();
             });
-        } catch (e) {
-            console.error("Got error", e);
+        };
+
+        const {resolverFile, typeDefsFile, helpersFile} = await loadCustomerCode();
+
+        const startServer = async (reload = false) => {
+            try {
+                spinner = ora({text: `${reload ? "Loading" : "Reloading"} code`, spinner: spinners.moon}).start();
+                const {databases, graphql} = cliData;
+                const {typeDefs, resolvers, helpers} = await loadCustomerCode();
+                const config: CreateServerConfig = {
+                    databases,
+                    graphql,
+                    resolverFile,
+                    typeDefsFile,
+                    helpersFile,
+                };
+                spinner.succeed();
+
+                server = await createServer(config, typeDefs, resolvers, helpers);
+
+                return new Promise(async (resolve,) => {
+                    spinner = ora({
+                        text: 'Starting server',
+                        spinner: spinners.runner
+                    }).start();
+
+                    const {url} = await server.listen();
+                    spinner.text = `Running server at ${url}`;
+
+                    process.on('SIGINT', () => {
+                        shutdownServer().then(() => process.exit(0));
+                    });
+
+                    process.on('SIGTERM', () => {
+                        shutdownServer().then(() => process.exit(0));
+                    });
+                });
+            } catch (e) {
+            }
         }
+
+        const fileChangedHandler = (fileName: string) => async (curr: fs.Stats, prev: fs.Stats) => {
+            console.log(`\n${fileName} file changed`);
+            await shutdownServer();
+            await startServer();
+        };
+        fs.watchFile(resolverFile, fileChangedHandler(resolverFile));
+        fs.watchFile(typeDefsFile, fileChangedHandler(typeDefsFile));
+        if (helpersFile) {
+            fs.watchFile(helpersFile, fileChangedHandler(helpersFile));
+        }
+        await startServer();
     },
     codegen: async (args) => {
         validateFiles();

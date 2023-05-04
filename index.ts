@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import * as yargs from 'yargs';
 import v1Cli from './versions/v1';
 import {run} from "./shared/helpers/cli";
-import {CliFnArgs, CliVersion, RunServerArgs, SupportedVersions, WithDeployKey} from "./shared/types";
+import {CliVersion, InitArgs, RunServerArgs, SupportedVersions, WithSubgraphData} from "./shared/types";
 import {checkForNpmUpdates} from "./shared/helpers/npm";
 import * as child_process from "child_process";
 
@@ -108,21 +108,21 @@ if (require.main === module) {
         switch (cmd) {
             case 'init':
                 if (checkVersion(cliOptions.cliVersion)) {
-                    await versions[cliOptions.cliVersion].init(cliOptions as unknown as CliFnArgs)
+                    await versions[cliOptions.cliVersion].init(cliOptions as unknown as InitArgs)
                 } else {
                     throw new Error(`Unsupported version: ${cliOptions.cliVersion}`);
                 }
                 break;
             case 'deploy':
                 if (checkVersion(cliOptions.cliVersion)) {
-                    await versions[cliOptions.cliVersion].deploy(cliOptions as unknown as WithDeployKey)
+                    await versions[cliOptions.cliVersion].deploy(cliOptions as unknown as WithSubgraphData)
                 } else {
                     throw new Error(`Unsupported version: ${cliOptions.cliVersion}`);
                 }
                 break;
             case 'validate':
                 if (checkVersion(cliOptions.cliVersion)) {
-                    await versions[cliOptions.cliVersion].validate(cliOptions as unknown as WithDeployKey)
+                    await versions[cliOptions.cliVersion].validate(cliOptions as unknown as WithSubgraphData)
                 } else {
                     throw new Error(`Unsupported version: ${cliOptions.cliVersion}`);
                 }
@@ -136,7 +136,7 @@ if (require.main === module) {
                 break;
             case 'codegen':
                 if (checkVersion(cliOptions.cliVersion)) {
-                    await versions[cliOptions.cliVersion].codegen(cliOptions as unknown as WithDeployKey)
+                    await versions[cliOptions.cliVersion].codegen(cliOptions as unknown as WithSubgraphData)
                 } else {
                     throw new Error(`Unsupported version: ${cliOptions.cliVersion}`);
                 }

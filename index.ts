@@ -1,32 +1,12 @@
 #!/usr/bin/env node
 
-<<<<<<< HEAD
 import * as fs from 'fs';
 import * as yargs from 'yargs';
 import v1Cli from './versions/v1';
 import {run} from "./shared/helpers/cli";
-import {CliVersion, InitArgs, RunServerArgs, SupportedVersions, WithSubgraphData} from "./shared/types";
+import {CliVersion, InitArgs, RunServerArgs, SupportedVersions, WithDeployKey, WithSubgraphData} from "./shared/types";
 import {checkForNpmUpdates} from "./shared/helpers/npm";
-
-======
-=
->>>>>>>
-50
-be0f0f4dae6e62c840a72e8c1254e30cda21c5
 import * as child_process from "child_process";
-import * as fs from "fs";
-import * as yargs from "yargs";
-
-import {run} from "./shared/helpers/cli";
-import {checkForNpmUpdates} from "./shared/helpers/npm";
-import {
-    CliFnArgs,
-    CliVersion,
-    RunServerArgs,
-    SupportedVersions,
-    WithDeployKey,
-} from "./shared/types";
-import v1Cli from "./versions/v1";
 
 const versions: Record<SupportedVersions, CliVersion> = {
     [SupportedVersions.v1]: v1Cli,

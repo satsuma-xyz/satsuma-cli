@@ -1,135 +1,162 @@
 #!/usr/bin/env node
 
+<<<<<<< HEAD
 import * as fs from 'fs';
 import * as yargs from 'yargs';
 import v1Cli from './versions/v1';
 import {run} from "./shared/helpers/cli";
 import {CliVersion, InitArgs, RunServerArgs, SupportedVersions, WithSubgraphData} from "./shared/types";
 import {checkForNpmUpdates} from "./shared/helpers/npm";
+
+======
+=
+>>>>>>>
+50
+be0f0f4dae6e62c840a72e8c1254e30cda21c5
 import * as child_process from "child_process";
+import * as fs from "fs";
+import * as yargs from "yargs";
+
+import {run} from "./shared/helpers/cli";
+import {checkForNpmUpdates} from "./shared/helpers/npm";
+import {
+    CliFnArgs,
+    CliVersion,
+    RunServerArgs,
+    SupportedVersions,
+    WithDeployKey,
+} from "./shared/types";
+import v1Cli from "./versions/v1";
 
 const versions: Record<SupportedVersions, CliVersion> = {
     [SupportedVersions.v1]: v1Cli,
-}
+};
 
 interface SatsumaJson {
     version: string;
 }
 
 const checkVersion = (version: string): version is SupportedVersions => {
-    return Object.values(SupportedVersions).includes(version as SupportedVersions);
-}
+    return Object.values(SupportedVersions).includes(
+        version as SupportedVersions
+    );
+};
 
 // Read the default version from the satsuma.json file
 const DEFAULT_VERSION = (() => {
     try {
-        const {version} = JSON.parse(fs.readFileSync('./.satsuma.json', 'utf8')) as SatsumaJson;
+        const {version} = JSON.parse(
+            fs.readFileSync("./.satsuma.json", "utf8")
+        ) as SatsumaJson;
         return version;
     } catch (err) {
         return null;
     }
 })();
 
-const NEWEST_VERSION = 'v1';
+const NEWEST_VERSION = "v1";
 
 const cliOptions = yargs
-    .option('cli-version', {
-        alias: 'v',
-        describe: 'Version of the script to run',
-        type: 'string',
-        choices: ['v1'],
+    .option("cli-version", {
+        alias: "v",
+        describe: "Version of the script to run",
+        type: "string",
+        choices: ["v1"],
         default: DEFAULT_VERSION || NEWEST_VERSION,
     })
-    .option('deploy-key', {
-        alias: 'k',
-        describe: 'Your Satsuma deploy key',
-        type: 'string',
+    .option("deploy-key", {
+        alias: "k",
+        describe: "Your Satsuma deploy key",
+        type: "string",
         demandOption: false,
     })
     .command({
-        command: 'init',
-        describe: 'Initialize the satsuma project',
-        handler: (args) => {
+        command: "init",
+        describe: "Initialize the satsuma project",
+        handler: () => {
         },
     })
     .command({
-        command: 'deploy',
-        describe: 'Deploy to Satsuma.xyz 🍊',
-        handler: (args) => {
-
+        command: "deploy",
+        describe: "Deploy to Satsuma.xyz 🍊",
+        handler: () => {
         },
     })
     .command({
-        command: 'validate',
-        describe: 'Validate your custom queries.',
-        handler: (args) => {
-
+        command: "validate",
+        describe: "Validate your custom queries.",
+        handler: () => {
         },
     })
     .command({
-        command: 'local',
-        describe: 'Run a local graphql server.',
-        handler: (args) => {
-
+        command: "local",
+        describe: "Run a local graphql server.",
+        handler: () => {
         },
     })
     .command({
-        command: 'codegen',
-        describe: 'Generate the graphql schema & types.',
-        handler: (args) => {
-
+        command: "codegen",
+        describe: "Generate the graphql schema & types.",
+        handler: () => {
         },
     })
     .command({
-        command: 'ignore',
-        describe: '',
-        handler: (args) => {
+        command: "ignore",
+        describe: "",
+        handler: () => {
         },
     })
     .command({
-        command: 'selfupdate',
-        describe: 'Update the Satsuma CLI',
-        handler: (args) => {
-
+        command: "selfupdate",
+        describe: "Update the Satsuma CLI",
+        handler: () => {
         },
     })
     .parseSync();
 
 if (require.main === module) {
     run(async () => {
-        console.log('🍊 Satsuma CLI version:', NEWEST_VERSION);
+        console.log("🍊 Satsuma CLI version:", NEWEST_VERSION);
 
         const cmd = cliOptions._[0];
 
-        if (cmd !== 'selfupdate') {
+        if (cmd !== "selfupdate") {
             await checkForNpmUpdates();
         }
 
         switch (cmd) {
-            case 'init':
+            case "init":
                 if (checkVersion(cliOptions.cliVersion)) {
-                    await versions[cliOptions.cliVersion].init(cliOptions as unknown as InitArgs)
+                    await versions[cliOptions.cliVersion].init(
+                        cliOptions as unknown as InitArgs
+                    );
                 } else {
                     throw new Error(`Unsupported version: ${cliOptions.cliVersion}`);
                 }
                 break;
-            case 'deploy':
+            case "deploy":
                 if (checkVersion(cliOptions.cliVersion)) {
-                    await versions[cliOptions.cliVersion].deploy(cliOptions as unknown as WithSubgraphData)
+                    await versions[cliOptions.cliVersion].deploy(
+                        cliOptions as unknown as WithDeployKey
+                    );
                 } else {
                     throw new Error(`Unsupported version: ${cliOptions.cliVersion}`);
                 }
                 break;
-            case 'validate':
+            case "validate":
                 if (checkVersion(cliOptions.cliVersion)) {
-                    await versions[cliOptions.cliVersion].validate(cliOptions as unknown as WithSubgraphData)
+                    await versions[cliOptions.cliVersion].validate(
+                        cliOptions as unknown as WithDeployKey
+                    );
                 } else {
                     throw new Error(`Unsupported version: ${cliOptions.cliVersion}`);
                 }
                 break;
-            case 'local':
+            case "local":
                 if (checkVersion(cliOptions.cliVersion)) {
-                    await versions[cliOptions.cliVersion].local(cliOptions as unknown as RunServerArgs)
+                    await versions[cliOptions.cliVersion].local(
+                        cliOptions as unknown as RunServerArgs
+                    );
                 } else {
                     throw new Error(`Unsupported version: ${cliOptions.cliVersion}`);
                 }
@@ -153,7 +180,6 @@ if (require.main === module) {
                 console.log('Done!');
                 break;
         }
-
     });
 }
 

@@ -1,14 +1,14 @@
 import * as fs from 'fs';
 import * as unzipper from 'unzipper';
 import * as path from 'path';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import {SupportedVersions} from "../types";
 import {addMetadata, createMetadataFile} from "./metadata";
 import axios from 'axios';
 import ora from 'ora';
 import {checkProjectNotExists} from "../../versions/v1/validations";
 
-const TEMP_ZIP_FILE = 'satsuma-project-skeleton.zip';
+const TEMP_ZIP_FILE = "satsuma-project-skeleton.zip";
 
 const createFileFromEntry = (entry: any, filePath: string, reset = false) => {
     if (fs.existsSync(filePath) && !reset) {
@@ -43,9 +43,10 @@ export const download = async (
         checkProjectNotExists();
     }
 
-    const repoUrl = `https://github.com/${repoOwner}/${repoName}/archive/refs/heads/${branch}.zip`
-    const rootZipFolder = `${repoName}-${branch}`;
-    const versionFolderPath = `${rootZipFolder}/${versionFolder}/`;
+
+  const repoUrl = `https://github.com/${repoOwner}/${repoName}/archive/refs/heads/${branch}.zip`;
+  const rootZipFolder = `${repoName}-${branch}`;
+  const versionFolderPath = `${rootZipFolder}/${versionFolder}/`;
 
     if (projectPathPrefix && !projectPathPrefix.endsWith('/')) {
         projectPathPrefix += '/'
@@ -71,6 +72,7 @@ export const download = async (
 
     const downloadedFiles: string[] = [];
 
+  if (projectPathPrefix) {
     try {
         await new Promise<void>((resolve, reject) => {
             axios({
@@ -139,4 +141,5 @@ export const download = async (
             spinner.fail(`Error downloading repository from GitHub: ${error}`);
         }
     }
-}
+  }
+};

@@ -1,8 +1,5 @@
-import {CliVersion, SupportedVersions} from "../../shared/types";
-import {download} from "../../shared/helpers/download-repo";
 import v1Codegen from "@satsuma/codegen/versions/v1";
 import {createServer} from "@satsuma/codegen/versions/v1/template/server";
-import {generateServer} from "@satsuma/codegen/versions/v1/create-server-files";
 import {getSatsumaMetadata} from "../../shared/helpers/auth";
 import {CreateServerConfig, Database} from "@satsuma/codegen/versions/v1/template/types";
 import {loadCustomerCode, satsumaMetadataConfig} from "./utils";
@@ -14,8 +11,10 @@ import axios from "axios";
 import spinners from "cli-spinners";
 import ora from "ora";
 import {ApolloServer} from 'apollo-server';
+import {download} from "../../shared/helpers/download-repo";
+import {CliVersion, SupportedVersions} from "../../shared/types";
 
-const MD_PATH = path.resolve(process.cwd(), '.satsuma.json');
+const MD_PATH = path.resolve(process.cwd(), ".satsuma.json");
 
 interface DownloadedFile {
     fileName: string;
@@ -36,39 +35,43 @@ const v1: CliVersion = {
         });
     },
     deploy: async (args) => {
+
         validateFiles();
         await validateExports();
         const deployKey = args.deployKey || getDeployKey(MD_PATH);
         const md = await getMetadata(MD_PATH);
-        if (!md) {
-            console.log('❌ Error: No metadata found. Did you run satsuma init?');
-            process.exit(1);
-        }
 
         const spinner = ora({
-            text: 'Deploying',
-            spinner: spinners.moon
+            text: "Deploying",
+            spinner: spinners.moon,
         }).start();
 
-        const cliData = await getSatsumaMetadata(args.subgraphName, args.versionName, deployKey);
+        const cliData = await getSatsumaMetadata(
+            args.subgraphName,
+            args.versionName,
+            deployKey
+        );
         if (!cliData) {
             spinner.fail(); // The error message is logged in getSatsumaMetadata
             return;
         }
 
-        const {resolverFile, typeDefsFile, helpersFile} = await loadCustomerCode();
-        const downloadedFiles: DownloadedFile[] = ([resolverFile, typeDefsFile, helpersFile].filter(Boolean) as string[]).map((file) => ({
+        const {resolverFile, typeDefsFile, helpersFile} =
+            await loadCustomerCode();
+        const downloadedFiles: DownloadedFile[] = (
+            [resolverFile, typeDefsFile, helpersFile].filter(Boolean) as string[]
+        ).map((file) => ({
             fileName: path.basename(file),
-            fileContents: fs.readFileSync(file, 'utf8'),
+            fileContents: fs.readFileSync(file, "utf8"),
         }));
 
         try {
-            const response = await axios.post('https://app.satsuma.xyz/api/cli/upload', {
+            await axios.post("https://app.satsuma.xyz/api/cli/upload", {
                 files: downloadedFiles,
             });
-            spinner.succeed('Uploaded files successfully');
+            spinner.succeed("Uploaded files successfully");
         } catch (error) {
-            spinner.fail('Error uploading files');
+            spinner.fail("Error uploading files");
             process.exit(1);
         }
     },
@@ -81,6 +84,14 @@ const v1: CliVersion = {
         });
 
         const deployKey = args.deployKey || getDeployKey(MD_PATH);
+
+        spinner.text = "Getting metadata";
+        const cliData = await satsumaMetadataConfig(deployKey, args.subgraphName, args.versionName);
+        if (!cliData) {
+            spinner.fail();
+            return;
+        }
+        spinner.succeed();
 
         try {
             const {typeDefs, resolvers, helpers, resolverFile, typeDefsFile, helpersFile} = await loadCustomerCode();
@@ -194,6 +205,6 @@ const v1: CliVersion = {
     upgrade: async (args) => {
         console.log('Not possible to update TO v1. Perhaps you mixed up the arguments?')
     }
-}
+};
 
 export default v1;

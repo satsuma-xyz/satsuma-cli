@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import * as yargs from 'yargs';
 import v1Cli from './versions/v1';
 import {run} from "./shared/helpers/cli";
-import {CliVersion, InitArgs, RunServerArgs, SupportedVersions, WithDeployKey, WithSubgraphData} from "./shared/types";
+import {CliVersion, InitArgs, RunServerArgs, SupportedVersions, WithSubgraphData} from "./shared/types";
 import {checkForNpmUpdates} from "./shared/helpers/npm";
 import * as child_process from "child_process";
 
@@ -117,7 +117,7 @@ if (require.main === module) {
             case "deploy":
                 if (checkVersion(cliOptions.cliVersion)) {
                     await versions[cliOptions.cliVersion].deploy(
-                        cliOptions as unknown as WithDeployKey
+                        cliOptions as unknown as WithSubgraphData
                     );
                 } else {
                     throw new Error(`Unsupported version: ${cliOptions.cliVersion}`);
@@ -126,7 +126,7 @@ if (require.main === module) {
             case "validate":
                 if (checkVersion(cliOptions.cliVersion)) {
                     await versions[cliOptions.cliVersion].validate(
-                        cliOptions as unknown as WithDeployKey
+                        cliOptions as unknown as WithSubgraphData
                     );
                 } else {
                     throw new Error(`Unsupported version: ${cliOptions.cliVersion}`);

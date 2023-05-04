@@ -2,7 +2,10 @@ import * as path from "path";
 import {getSatsumaMetadata} from "../../shared/helpers/auth";
 import {CreateServerConfig, Database} from "@satsuma/codegen/versions/v1/template/types";
 
-import { getMetadata } from "../../shared/helpers/metadata";
+import {getMetadata} from "../../shared/helpers/metadata";
+import type {Server} from 'http';
+import type {AddressInfo} from 'net';
+import {format} from 'url';
 
 export const getFilePath = () => {
   const cwd = process.cwd();
@@ -90,7 +93,7 @@ export const satsumaMetadataConfig = async (deployKey: string, subgraphName?: st
             type: "pg" as "pg",
             name: "knex",
             search_path: cliData.entitySchema,
-            tables: {}
+            tables,
         },
     ];
     const graphql = [
@@ -107,4 +110,22 @@ export const satsumaMetadataConfig = async (deployKey: string, subgraphName?: st
         versionName,
         deployKey,
     }
+}
+
+export function urlForHttpServer(httpServer: Server): string {
+    const { address, port } = httpServer.address() as AddressInfo;
+
+    // Convert IPs which mean "any address" (IPv4 or IPv6) into localhost
+    // corresponding loopback ip. Note that the url field we're setting is
+    // primarily for consumption by our test suite. If this heuristic is wrong for
+    // your use case, explicitly specify a frontend host (in the `host` option
+    // when listening).
+    const hostname = address === '' || address === '::' ? 'localhost' : address;
+
+    return format({
+        protocol: 'http',
+        hostname,
+        port,
+        pathname: '/',
+    });
 }

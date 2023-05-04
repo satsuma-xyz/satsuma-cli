@@ -1,18 +1,18 @@
 import v1Codegen from "@satsuma/codegen/versions/v1";
-import {createServer} from "@satsuma/codegen/versions/v1/template/server";
+import {createApolloServer, createStandaloneServer, createApolloServerContext} from "@satsuma/codegen/versions/v1/template/server";
 import {getSatsumaMetadata} from "../../shared/helpers/auth";
-import {CreateServerConfig, Database} from "@satsuma/codegen/versions/v1/template/types";
-import {loadCustomerCode, satsumaMetadataConfig} from "./utils";
-import {checkProjectNotExists, validateExports, validateFiles} from "./validations";
+import {CreateServerConfig} from "@satsuma/codegen/versions/v1/template/types";
+import {loadCustomerCode, satsumaMetadataConfig, urlForHttpServer} from "./utils";
+import {validateExports, validateFiles} from "./validations";
 import {getDeployKey, getMetadata} from "../../shared/helpers/metadata";
 import * as path from "path";
 import * as fs from "fs";
 import axios from "axios";
 import spinners from "cli-spinners";
 import ora from "ora";
-import {ApolloServer} from 'apollo-server';
 import {download} from "../../shared/helpers/download-repo";
 import {CliVersion, SupportedVersions} from "../../shared/types";
+import * as http from "http";
 
 const MD_PATH = path.resolve(process.cwd(), ".satsuma.json");
 
@@ -94,7 +94,7 @@ const v1: CliVersion = {
         spinner.succeed();
 
         try {
-            const {typeDefs, resolvers, helpers, resolverFile, typeDefsFile, helpersFile} = await loadCustomerCode();
+            const {typeDefs, resolvers, resolverFile, typeDefsFile, helpersFile} = await loadCustomerCode();
             const config: CreateServerConfig = {
                 databases: [],
                 graphql: [],
@@ -103,8 +103,8 @@ const v1: CliVersion = {
                 helpersFile,
             };
 
-            const server = await createServer(config, typeDefs, resolvers, helpers);
-            await server.listen();
+            const server = await createApolloServer(config, typeDefs, resolvers);
+            await server.start();
             await server.stop();
         } catch (e) {
             spinner.fail(`Validation Failed ${e}`);
@@ -129,13 +129,13 @@ const v1: CliVersion = {
         }
         spinner.succeed();
 
-        let server: ApolloServer;
+        let server: http.Server;
 
         const shutdownServer = () => {
             return new Promise<void>(async (resolve) => {
                 spinner.text = 'Shutting down server...';
                 if (server) {
-                    server.stop().then(() => {
+                    server.close(() => {
                         spinner.info("Server shut down");
                         resolve();
                     });
@@ -162,7 +162,8 @@ const v1: CliVersion = {
                 };
                 spinner.succeed();
 
-                server = await createServer(config, typeDefs, resolvers, helpers);
+                const reservedServer = await createStandaloneServer(config, typeDefs, resolvers, helpers);
+                server = reservedServer.httpServer;
 
                 return new Promise(async (resolve,) => {
                     spinner = ora({
@@ -170,8 +171,8 @@ const v1: CliVersion = {
                         spinner: spinners.runner
                     }).start();
 
-                    const {url} = await server.listen();
-                    spinner.text = `Running server at ${url}`;
+                    await server.listen(4000);
+                    spinner.text = `Running server at ${urlForHttpServer(server)}`;
 
                     process.on('SIGINT', () => {
                         shutdownServer().then(() => process.exit(0));
@@ -182,6 +183,7 @@ const v1: CliVersion = {
                     });
                 });
             } catch (e) {
+                console.log(e);
             }
         }
 

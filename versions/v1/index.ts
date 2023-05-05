@@ -14,19 +14,7 @@ import {download} from "../../shared/helpers/download-repo";
 import {CliVersion, SupportedVersions} from "../../shared/types";
 import * as http from "http";
 import type { CodegenConfig } from "@graphql-codegen/cli";
-import {generate} from "@graphql-codegen/cli";
-import {mkdtemp} from "fs";
-import * as os from "os";
-
-const gqlCodegenConfig = (schemaPath: string, outFile: string): CodegenConfig => ({
-    overwrite: true,
-    schema: schemaPath,
-    generates: {
-        [outFile]: {
-            plugins: ["typescript"],
-        },
-    },
-})
+import {blue} from "colors/safe";
 
 const MD_PATH = path.resolve(process.cwd(), ".satsuma.json");
 
@@ -232,6 +220,9 @@ const v1: CliVersion = {
                 helpersFile,
                 outputPath: outputPath
             });
+
+            ora().succeed(`Generated gQL schema at ${blue(`${outputPath}schema.graphql`)}`);
+            ora().succeed(`Generated typescript types at ${blue(`${outputPath}schema.ts`)}`);
         } catch (e) {
             console.trace()
             console.error(e);

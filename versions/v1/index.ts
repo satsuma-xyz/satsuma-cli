@@ -4,7 +4,7 @@ import {getSatsumaMetadata} from "../../shared/helpers/auth";
 import {CreateServerConfig} from "@satsuma/codegen/versions/v1/template/types";
 import {loadCustomerCode, satsumaMetadataConfig, urlForHttpServer} from "./utils";
 import {validateExports, validateFiles} from "./validations";
-import {getDeployKey, getMetadata} from "../../shared/helpers/metadata";
+import {getCustomQueryPath, getDeployKey, getMetadata} from "../../shared/helpers/metadata";
 import * as path from "path";
 import * as fs from "fs";
 import axios from "axios";
@@ -13,6 +13,20 @@ import ora from "ora";
 import {download} from "../../shared/helpers/download-repo";
 import {CliVersion, SupportedVersions} from "../../shared/types";
 import * as http from "http";
+import type { CodegenConfig } from "@graphql-codegen/cli";
+import {generate} from "@graphql-codegen/cli";
+import {mkdtemp} from "fs";
+import * as os from "os";
+
+const gqlCodegenConfig = (schemaPath: string, outFile: string): CodegenConfig => ({
+    overwrite: true,
+    schema: schemaPath,
+    generates: {
+        [outFile]: {
+            plugins: ["typescript"],
+        },
+    },
+})
 
 const MD_PATH = path.resolve(process.cwd(), ".satsuma.json");
 
@@ -148,6 +162,14 @@ const v1: CliVersion = {
 
         const {resolverFile, typeDefsFile, helpersFile} = await loadCustomerCode();
 
+        process.on('SIGINT', () => {
+            shutdownServer().then(() => process.exit(0));
+        });
+
+        process.on('SIGTERM', () => {
+            shutdownServer().then(() => process.exit(0));
+        });
+
         const startServer = async (reload = false) => {
             try {
                 spinner = ora({text: `${reload ? "Loading" : "Reloading"} code`, spinner: spinners.moon}).start();
@@ -173,14 +195,6 @@ const v1: CliVersion = {
 
                     await server.listen(4000);
                     spinner.text = `Running server at ${urlForHttpServer(server)}`;
-
-                    process.on('SIGINT', () => {
-                        shutdownServer().then(() => process.exit(0));
-                    });
-
-                    process.on('SIGTERM', () => {
-                        shutdownServer().then(() => process.exit(0));
-                    });
                 });
             } catch (e) {
                 console.log(e);
@@ -202,7 +216,26 @@ const v1: CliVersion = {
     codegen: async (args) => {
         validateFiles();
         await validateExports();
-        await v1Codegen.types(args);
+
+        const {resolverFile, typeDefsFile, helpersFile} = await loadCustomerCode();
+        const outputPath = getCustomQueryPath(MD_PATH);
+        const deployKey = args.deployKey || getDeployKey(MD_PATH);
+        const cliData = await satsumaMetadataConfig(deployKey, args.subgraphName, args.versionName);
+        if (!cliData) {
+            return;
+        }
+        try {
+            await v1Codegen.types({
+                ...cliData,
+                resolverFile,
+                typeDefsFile,
+                helpersFile,
+                outputPath: outputPath
+            });
+        } catch (e) {
+            console.trace()
+            console.error(e);
+        }
     },
     upgrade: async (args) => {
         console.log('Not possible to update TO v1. Perhaps you mixed up the arguments?')

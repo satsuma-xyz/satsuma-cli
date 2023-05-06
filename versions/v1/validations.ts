@@ -56,12 +56,15 @@ export const validateExports = async () => {
     spinner.fail(`Missing export \`resolvers\` from ${resolverPath}.`);
     error = true;
   }
-  spinner.succeed("Resolvers found");
+  if (!error) {
+      spinner.succeed("Resolvers found");
+  }
 
   spinner = ora({
     text: "Checking Typedefs",
     spinner: spinners.moon,
   }).start();
+
   const typeDefsPath = "./custom-queries/typeDefs.ts";
   const typeDefsFile = path.resolve(typeDefsPath);
   try {
@@ -73,7 +76,10 @@ export const validateExports = async () => {
     spinner.fail(`Missing export \`typeDefs\` from ${typeDefsPath}.`);
     error = true;
   }
-  spinner.succeed("TypeDefs found");
+
+  if (!error) {
+    spinner.succeed("TypeDefs found");
+  }
 
   spinner = ora({
     text: "Checking helpers",

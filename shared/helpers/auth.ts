@@ -4,6 +4,7 @@ import {stringify} from "query-string";
 import colors from 'colors/safe';
 import ora from "ora";
 import {Database, GraphQLServer} from "@satsuma/codegen/versions/v1/template/types";
+import {SupportedVersions} from "../types";
 
 interface SatsumaMetadata {
     databases: Database[];
@@ -24,7 +25,7 @@ const isErrorResponse = (
   return (response as ErrorResponse).message !== undefined;
 };
 
-export const getSatsumaMetadata = async (subgraphName?: string, versionName?: string, deployKey?: string): Promise<SatsumaMetadata | undefined> => {
+export const getSatsumaMetadata = async (cliVersion: SupportedVersions, subgraphName?: string, versionName?: string, deployKey?: string): Promise<SatsumaMetadata | undefined> => {
     const spinner = ora({text: 'Fetching data from Satsuma API', spinner: "moon"}).start();
 
     if (!deployKey) {
@@ -38,7 +39,7 @@ export const getSatsumaMetadata = async (subgraphName?: string, versionName?: st
         const headers: AxiosRequestHeaders['headers'] = {
             Authorization: `Bearer ${deployKey}`
         };
-        const url = `https://app.satsuma.xyz/api/cli/data?${stringify({subgraphName, versionName})}`
+        const url = `https://app.satsuma.xyz/api/cli/data?${stringify({subgraphName, versionName, cliVersion})}`
         const result = await axios.get(url, {
             headers
         });

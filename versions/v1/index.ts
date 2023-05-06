@@ -1,5 +1,5 @@
 import v1Codegen from "@satsuma/codegen/versions/v1";
-import {createApolloServer, createStandaloneServer, createApolloServerContext} from "@satsuma/codegen/versions/v1/template/server";
+import {createApolloServer, createStandaloneServer} from "@satsuma/codegen/versions/v1/template/server";
 import {getSatsumaMetadata} from "../../shared/helpers/auth";
 import {CreateServerConfig} from "@satsuma/codegen/versions/v1/template/types";
 import {loadCustomerCode, satsumaMetadataConfig, urlForHttpServer} from "./utils";
@@ -13,7 +13,6 @@ import ora from "ora";
 import {download} from "../../shared/helpers/download-repo";
 import {CliVersion, SupportedVersions} from "../../shared/types";
 import * as http from "http";
-import type { CodegenConfig } from "@graphql-codegen/cli";
 import {blue} from "colors/safe";
 
 const MD_PATH = path.resolve(process.cwd(), ".satsuma.json");
@@ -49,6 +48,7 @@ const v1: CliVersion = {
         }).start();
 
         const cliData = await getSatsumaMetadata(
+            SupportedVersions.v1,
             args.subgraphName,
             args.versionName,
             deployKey
@@ -88,7 +88,7 @@ const v1: CliVersion = {
         const deployKey = args.deployKey || getDeployKey(MD_PATH);
 
         spinner.text = "Getting metadata";
-        const cliData = await satsumaMetadataConfig(deployKey, args.subgraphName, args.versionName);
+        const cliData = await satsumaMetadataConfig(SupportedVersions.v1, deployKey, args.subgraphName, args.versionName);
         if (!cliData) {
             spinner.fail();
             return;
@@ -124,7 +124,7 @@ const v1: CliVersion = {
         const deployKey = args.deployKey || getDeployKey(MD_PATH);
 
         spinner.text = "Getting metadata";
-        const cliData = await satsumaMetadataConfig(deployKey, args.subgraphName, args.versionName);
+        const cliData = await satsumaMetadataConfig(SupportedVersions.v1, deployKey, args.subgraphName, args.versionName);
         if (!cliData) {
             spinner.fail();
             return;
@@ -208,7 +208,7 @@ const v1: CliVersion = {
         const {resolverFile, typeDefsFile, helpersFile} = await loadCustomerCode();
         const outputPath = getCustomQueryPath(MD_PATH);
         const deployKey = args.deployKey || getDeployKey(MD_PATH);
-        const cliData = await satsumaMetadataConfig(deployKey, args.subgraphName, args.versionName);
+        const cliData = await satsumaMetadataConfig(SupportedVersions.v1, deployKey, args.subgraphName, args.versionName);
         if (!cliData) {
             return;
         }

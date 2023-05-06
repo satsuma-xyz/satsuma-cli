@@ -6,6 +6,7 @@ import {getMetadata} from "../../shared/helpers/metadata";
 import type {Server} from 'http';
 import type {AddressInfo} from 'net';
 import {format} from 'url';
+import {SupportedVersions} from "../../shared/types";
 
 export const getFilePath = () => {
   const cwd = process.cwd();
@@ -44,8 +45,8 @@ export const loadCustomerCode = async () => {
     }
 }
 
-export const satsumaMetadataConfig = async (deployKey: string, subgraphName?: string, versionName?: string) => {
-    const cliData = await getSatsumaMetadata(subgraphName, versionName, deployKey);
+export const satsumaMetadataConfig = async (cliVersion: SupportedVersions, deployKey: string, subgraphName?: string, versionName?: string) => {
+    const cliData = await getSatsumaMetadata(cliVersion, subgraphName, versionName, deployKey);
     if (!cliData) {
         return;
     }

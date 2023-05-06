@@ -3,16 +3,11 @@ import axios, {AxiosRequestHeaders} from "axios";
 import {stringify} from "query-string";
 import colors from 'colors/safe';
 import ora from "ora";
+import {Database, GraphQLServer} from "@satsuma/codegen/versions/v1/template/types";
 
 interface SatsumaMetadata {
-  dbUri: string;
-  metadataDBUri: string;
-  queryHost: string;
-  entitySchema: string;
-  nonPartitionedTables: string[];
-  partitionedTables: string[];
-  nonPartitionedTablesBR: string[];
-  entityTablesWithBR: string[];
+    databases: Database[];
+    graphql: GraphQLServer[];
 }
 
 interface ErrorResponse {

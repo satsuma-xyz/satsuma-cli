@@ -117,7 +117,7 @@ const v1: CliVersion = {
     },
     local: async (args) => {
         validateFiles();
-        // await validateExports();
+        await validateExports();
         let spinner = ora({
             spinner: spinners.moon
         });

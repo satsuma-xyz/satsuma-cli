@@ -50,7 +50,6 @@ export const validateExports = async () => {
   try {
     if ((await import(resolverPath)).resolvers === undefined) {
       spinner.fail(`Missing export \`resolvers\` from ${resolverPath}.ts.`);
-      console.log('got', await import(resolverPath));
       error = true;
     }
   } catch (e) {
@@ -70,7 +69,6 @@ export const validateExports = async () => {
   try {
     if ((await import(typeDefsPath)).typeDefs === undefined) {
       spinner.fail(`Missing export \`typeDefs\` from ${typeDefsPath}.ts.`);
-      console.log('got', await import(typeDefsPath));
       error = true;
     }
   } catch {

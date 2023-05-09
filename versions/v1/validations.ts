@@ -2,6 +2,7 @@ import spinners from "cli-spinners";
 import * as fs from "fs";
 import ora from "ora";
 import * as path from "path";
+import {getFilePath} from "./utils";
 
 export const checkProjectNotExists = () => {
   // Check if .satsuma.json exists in cwd
@@ -39,8 +40,7 @@ export const validateFiles = () => {
 };
 
 export const validateExports = async () => {
-  const resolverPath = "./custom-queries/resolvers.ts";
-  const resolverFile = path.resolve(resolverPath);
+  const resolverPath = getFilePath("resolvers.ts");
   let error = false;
 
   let spinner = ora({
@@ -48,7 +48,7 @@ export const validateExports = async () => {
     spinner: spinners.moon,
   }).start();
   try {
-    if ((await import(resolverFile)).resolvers === undefined) {
+    if ((await import(resolverPath)).resolvers === undefined) {
       spinner.fail(`Missing export \`resolvers\` from ${resolverPath}.`);
       error = true;
     }
@@ -65,10 +65,9 @@ export const validateExports = async () => {
     spinner: spinners.moon,
   }).start();
 
-  const typeDefsPath = "./custom-queries/typeDefs.ts";
-  const typeDefsFile = path.resolve(typeDefsPath);
+  const typeDefsPath = getFilePath("typeDefs.ts");
   try {
-    if ((await import(typeDefsFile)).typeDefs === undefined) {
+    if ((await import(typeDefsPath)).typeDefs === undefined) {
       spinner.fail(`Missing export \`typeDefs\` from ${typeDefsPath}.`);
       error = true;
     }
@@ -85,11 +84,10 @@ export const validateExports = async () => {
     text: "Checking helpers",
     spinner: spinners.moon,
   }).start();
-  const helpersPath = "./custom-queries/helpers.ts";
-  const helpersFile = path.resolve(helpersPath);
+  const helpersPath = getFilePath("helpers.ts");
   try {
-    if (fs.existsSync(helpersFile)) {
-      if ((await import(helpersFile)).helpers === undefined) {
+    if (fs.existsSync(helpersPath)) {
+      if ((await import(helpersPath)).helpers === undefined) {
         spinner.fail(`Missing export \`helpers\` from ${helpersPath}.`);
         error = true;
       }

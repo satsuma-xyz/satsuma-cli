@@ -50,10 +50,11 @@ export const validateExports = async () => {
   try {
     if ((await import(resolverPath)).resolvers === undefined) {
       spinner.fail(`Missing export \`resolvers\` from ${resolverPath}.`);
+      console.log('got', await import(resolverPath));
       error = true;
     }
   } catch (e) {
-    spinner.fail(`Missing export \`resolvers\` from ${resolverPath}.`);
+    spinner.fail(`Missing export \`resolvers\` from ${resolverPath}. File does not exist.`);
     error = true;
   }
   if (!error) {
@@ -69,10 +70,11 @@ export const validateExports = async () => {
   try {
     if ((await import(typeDefsPath)).typeDefs === undefined) {
       spinner.fail(`Missing export \`typeDefs\` from ${typeDefsPath}.`);
+      console.log('got', await import(typeDefsPath));
       error = true;
     }
   } catch {
-    spinner.fail(`Missing export \`typeDefs\` from ${typeDefsPath}.`);
+    spinner.fail(`Missing export \`typeDefs\` from ${typeDefsPath}. File does not exist.`);
     error = true;
   }
 

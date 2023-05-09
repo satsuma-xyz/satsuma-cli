@@ -163,6 +163,7 @@ const v1: CliVersion = {
                 spinner = ora({text: `${reload ? "Loading" : "Reloading"} code`, spinner: spinners.moon}).start();
                 const {databases, graphql} = cliData;
                 const {typeDefs, resolvers, helpers} = await loadCustomerCode();
+                console.log({typeDefs, resolvers, helpers});
                 const config: CreateServerConfig = {
                     databases,
                     graphql,

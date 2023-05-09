@@ -53,6 +53,7 @@ export const validateExports = async () => {
       error = true;
     }
   } catch (e) {
+    console.log("ERROR", e);
     spinner.fail(`Missing export \`resolvers\` from ${resolverPath}.ts. File does not exist.`);
     error = true;
   }
@@ -71,7 +72,8 @@ export const validateExports = async () => {
       spinner.fail(`Missing export \`typeDefs\` from ${typeDefsPath}.ts.`);
       error = true;
     }
-  } catch {
+  } catch (e) {
+    console.log("ERROR", e);
     spinner.fail(`Missing export \`typeDefs\` from ${typeDefsPath}.ts. File does not exist.`);
     error = true;
   }

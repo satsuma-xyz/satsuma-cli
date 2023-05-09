@@ -50,8 +50,8 @@
   },
   "bin": "./index.js",
   "scripts": {
-    "satsuma": "npx ts-node index.ts",
-    "build": "npx tsc index.ts --esModuleInterop && chmod 755 index.js",
+    "satsuma": "npx ts-node run.ts",
+    "build": "npx tsc run.ts --esModuleInterop && chmod 755 index.js",
     "test": "NODE_ENV=test ./node_modules/.bin/jest --runInBand --passWithNoTests",
     "lint": "eslint --cache --max-warnings 0 \"**/*.{ts,tsx}\"",
     "typecheck": "tsc --project tsconfig.json --noEmit"
@@ -61,7 +61,7 @@
     "url": "https://github.com/satsuma-xyz/satsuma-cli.git"
   },
   "files": [
-    "index.ts",
+    "run.ts",
     "index.js",
     "versions/",
     "shared/"

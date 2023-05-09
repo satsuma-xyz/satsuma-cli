@@ -15,14 +15,14 @@ export const getFilePath = (fileName: string) => {
 };
 
 export const loadCustomerCode = async () => {
-  const resolverFile = getFilePath("resolvers.ts");
+  const resolverFile = getFilePath("resolvers");
   let resolvers = {};
   try {
     resolvers = (await import(resolverFile)).resolvers;
   } catch {
     // Do nothing.
   }
-  const typeDefsFile = getFilePath("typeDefs.ts");
+  const typeDefsFile = getFilePath("typeDefs");
   let typeDefs = "";
   try {
     typeDefs = (await import(typeDefsFile)).typeDefs;
@@ -30,7 +30,7 @@ export const loadCustomerCode = async () => {
     // Do nothing.
   }
   let helpersFile: string | undefined = getFilePath(
-    "helpers.ts"
+    "helpers"
   );
   let helpers = {};
   try {

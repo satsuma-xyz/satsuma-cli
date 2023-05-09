@@ -8,29 +8,30 @@ import type {AddressInfo} from 'net';
 import {format} from 'url';
 import {SupportedVersions} from "../../shared/types";
 
-export const getFilePath = () => {
+export const getFilePath = (fileName: string) => {
   const cwd = process.cwd();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const metaData = getMetadata(path.join(cwd, ".satsuma.json"));
+  return path.resolve(cwd, metaData?.projectPathPrefix || "", fileName);
 };
 
 export const loadCustomerCode = async () => {
-  const resolverFile = path.resolve("./custom-queries/resolvers.ts");
+  const resolverFile = getFilePath("resolvers.ts");
   let resolvers = {};
   try {
     resolvers = (await import(resolverFile)).resolvers;
   } catch {
     // Do nothing.
   }
-  const typeDefsFile = path.resolve("./custom-queries/typeDefs.ts");
+  const typeDefsFile = getFilePath("typeDefs.ts");
   let typeDefs = "";
   try {
     typeDefs = (await import(typeDefsFile)).typeDefs;
   } catch {
     // Do nothing.
   }
-  let helpersFile: string | undefined = path.resolve(
-    "./custom-queries/helpers.ts"
+  let helpersFile: string | undefined = getFilePath(
+    "helpers.ts"
   );
   let helpers = {};
   try {

@@ -40,7 +40,7 @@ export const validateFiles = () => {
 };
 
 export const validateExports = async () => {
-  const resolverPath = getFilePath("resolvers.ts");
+  const resolverPath = getFilePath("resolvers");
   let error = false;
 
   let spinner = ora({
@@ -49,12 +49,12 @@ export const validateExports = async () => {
   }).start();
   try {
     if ((await import(resolverPath)).resolvers === undefined) {
-      spinner.fail(`Missing export \`resolvers\` from ${resolverPath}.`);
+      spinner.fail(`Missing export \`resolvers\` from ${resolverPath}.ts.`);
       console.log('got', await import(resolverPath));
       error = true;
     }
   } catch (e) {
-    spinner.fail(`Missing export \`resolvers\` from ${resolverPath}. File does not exist.`);
+    spinner.fail(`Missing export \`resolvers\` from ${resolverPath}.ts. File does not exist.`);
     error = true;
   }
   if (!error) {
@@ -66,15 +66,15 @@ export const validateExports = async () => {
     spinner: spinners.moon,
   }).start();
 
-  const typeDefsPath = getFilePath("typeDefs.ts");
+  const typeDefsPath = getFilePath("typeDefs");
   try {
     if ((await import(typeDefsPath)).typeDefs === undefined) {
-      spinner.fail(`Missing export \`typeDefs\` from ${typeDefsPath}.`);
+      spinner.fail(`Missing export \`typeDefs\` from ${typeDefsPath}.ts.`);
       console.log('got', await import(typeDefsPath));
       error = true;
     }
   } catch {
-    spinner.fail(`Missing export \`typeDefs\` from ${typeDefsPath}. File does not exist.`);
+    spinner.fail(`Missing export \`typeDefs\` from ${typeDefsPath}.ts. File does not exist.`);
     error = true;
   }
 
@@ -86,11 +86,11 @@ export const validateExports = async () => {
     text: "Checking helpers",
     spinner: spinners.moon,
   }).start();
-  const helpersPath = getFilePath("helpers.ts");
+  const helpersPath = getFilePath("helpers");
   try {
     if (fs.existsSync(helpersPath)) {
       if ((await import(helpersPath)).helpers === undefined) {
-        spinner.fail(`Missing export \`helpers\` from ${helpersPath}.`);
+        spinner.fail(`Missing export \`helpers\` from ${helpersPath}.ts.`);
         error = true;
       }
       spinner.succeed("Helpers found");

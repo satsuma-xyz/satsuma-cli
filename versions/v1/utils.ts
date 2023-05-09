@@ -10,7 +10,6 @@ import {SupportedVersions} from "../../shared/types";
 
 export const getFilePath = (fileName: string) => {
   const cwd = process.cwd();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const metaData = getMetadata(path.join(cwd, ".satsuma.json"));
   return path.resolve(cwd, metaData?.projectPathPrefix || "", fileName);
 };

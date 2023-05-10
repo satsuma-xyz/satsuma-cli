@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env -S ts-node --files
 
 import * as fs from 'fs';
 import * as yargs from 'yargs';

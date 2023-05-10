@@ -10,7 +10,7 @@
     "ipfs",
     "graphql"
   ],
-  "main": "./index.js",
+  "main": "./run.js",
   "dependencies": {
     "@apollo/server": "^4.7.0",
     "@graphql-codegen/client-preset": "^3.0.1",
@@ -48,10 +48,10 @@
     "ts-jest": "^29.1.0",
     "typescript": "^5.0.4"
   },
-  "bin": "./index.js",
+  "bin": "./run.js",
   "scripts": {
-    "satsuma": "npx ts-node index.ts",
-    "build": "npx tsc index.ts --esModuleInterop && chmod 755 index.js",
+    "satsuma": "npx ts-node run.ts",
+    "build": "npx tsc run.ts --esModuleInterop && chmod 755 run.js",
     "test": "NODE_ENV=test ./node_modules/.bin/jest --runInBand --passWithNoTests",
     "lint": "eslint --cache --max-warnings 0 \"**/*.{ts,tsx}\"",
     "typecheck": "tsc --project tsconfig.json --noEmit"
@@ -63,8 +63,8 @@
   "files": [
     "run.ts",
     "run.js",
-    "index.ts",
-    "index.js",
+    "passthrough.ts",
+    "passthrough.js",
     "versions/",
     "shared/"
   ],

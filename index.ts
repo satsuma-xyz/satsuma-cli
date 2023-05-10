@@ -3,6 +3,6 @@
 import * as child_process from "child_process";
 import path from "path";
 
-const location = path.resolve(process.cwd(), "run.ts");
+const location = path.resolve(__dirname, "run.ts");
 
 child_process.execSync(`npx ts-node ${location} ` + process.argv.slice(2).join(" "));

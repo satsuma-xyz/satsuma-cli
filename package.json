@@ -51,7 +51,7 @@
   "bin": "./index.js",
   "scripts": {
     "satsuma": "npx ts-node run.ts",
-    "build": "npx tsc run.ts --esModuleInterop && chmod 755 index.js",
+    "build": "npx tsc run.ts --esModuleInterop && chmod 755 run.js",
     "test": "NODE_ENV=test ./node_modules/.bin/jest --runInBand --passWithNoTests",
     "lint": "eslint --cache --max-warnings 0 \"**/*.{ts,tsx}\"",
     "typecheck": "tsc --project tsconfig.json --noEmit"
@@ -62,6 +62,8 @@
   },
   "files": [
     "run.ts",
+    "run.js",
+    "index.ts",
     "index.js",
     "versions/",
     "shared/"

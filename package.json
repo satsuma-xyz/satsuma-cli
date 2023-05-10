@@ -48,7 +48,7 @@
     "ts-jest": "^29.1.0",
     "typescript": "^5.0.4"
   },
-  "bin": "./index.js",
+  "bin": "./run.js",
   "scripts": {
     "satsuma": "npx ts-node run.ts",
     "build": "npx tsc run.ts --esModuleInterop && chmod 755 run.js",

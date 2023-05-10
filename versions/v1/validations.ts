@@ -15,11 +15,20 @@ export const checkProjectNotExists = () => {
 };
 
 export const validateFiles = () => {
+  const satsumaJson = ".satsuma.json";
   const typeDefsPath = "./custom-queries/typeDefs.ts";
   const resolversPath = "./custom-queries/resolvers.ts";
 
+  const satsumaJsonExist = fs.existsSync(satsumaJson);
   const typeDefsExist = fs.existsSync(typeDefsPath);
   const resolversExist = fs.existsSync(resolversPath);
+
+  if (!satsumaJsonExist && !satsumaJsonExist) {
+    console.error(
+      "No .satsuma.json metadata found. Please run `init` to get started"
+    );
+    process.exit(1);
+  }
 
   if (!typeDefsExist && !resolversExist) {
     console.error(

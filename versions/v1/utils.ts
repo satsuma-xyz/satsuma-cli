@@ -1,4 +1,5 @@
 import * as path from "path";
+import * as fs from "fs";
 import {getSatsumaMetadata} from "../../shared/helpers/auth";
 import {CreateServerConfig, Database} from "@satsuma/codegen/versions/v1/template/types";
 
@@ -9,48 +10,58 @@ import {format} from 'url';
 import {SupportedVersions} from "../../shared/types";
 
 export const getFilePath = (fileName: string) => {
-  const cwd = process.cwd();
-  const metaData = getMetadata(path.join(cwd, ".satsuma.json"));
-  return path.resolve(cwd, metaData?.projectPathPrefix || "", fileName);
+    const cwd = process.cwd();
+    const metaData = getMetadata(path.join(cwd, ".satsuma.json"));
+    return path.resolve(cwd, metaData?.projectPathPrefix || "", fileName);
 };
 
 export const loadCustomerCode = async () => {
-  const resolverFile = getFilePath("resolvers.ts");
-  let resolvers = {};
-  try {
-      try {
-          delete require.cache[require.resolve(resolverFile)];
-      } catch (err) { }
-    resolvers = (await import(resolverFile)).resolvers;
-  } catch {
-  }
+    const resolverFile = getFilePath("resolvers.ts");
+    let resolvers = {};
+    try {
+        try {
+            delete require.cache[require.resolve(resolverFile)];
+        } catch (err) {
+        }
+        resolvers = (await import(resolverFile)).resolvers;
+    } catch {
+    }
 
-  const typeDefsFile = getFilePath("typeDefs.ts");
-  let typeDefs = "";
-  try {
-      try {
-          delete require.cache[require.resolve(typeDefsFile)];
-      } catch (err) { }
-    typeDefs = (await import(typeDefsFile)).typeDefs;
-  } catch {
-  }
+    const typeDefsFile = getFilePath("typeDefs.ts");
+    let typeDefs = "";
+    try {
+        try {
+            delete require.cache[require.resolve(typeDefsFile)];
+        } catch (err) {
+        }
+        typeDefs = (await import(typeDefsFile)).typeDefs;
+    } catch {
+    }
 
-  let helpersFile: string | undefined = getFilePath(
-    "helpers.ts"
-  );
-  let helpers = {};
-  try {
-      try {
-          delete require.cache[require.resolve(helpersFile)];
-      } catch (err) { }
-    helpers = (await import(helpersFile)).helpers;
-  } catch {
-    helpersFile = undefined;
-  }
+    let helpersFile: string | undefined = getFilePath(
+        "helpers.ts"
+    );
+    let helpers = {};
+    try {
+        try {
+            delete require.cache[require.resolve(helpersFile)];
+        } catch (err) {
+        }
+        helpers = (await import(helpersFile)).helpers;
+    } catch {
+        helpersFile = undefined;
+    }
+
+    let schemaFile: string | undefined = getFilePath(
+        "schema.ts"
+    );
+    if (!fs.existsSync(schemaFile)) {
+        schemaFile = undefined;
+    }
 
     return {
         resolvers, typeDefs, helpers,
-        resolverFile, typeDefsFile, helpersFile
+        resolverFile, typeDefsFile, helpersFile, schemaFile
     }
 }
 
@@ -69,7 +80,7 @@ export const satsumaMetadataConfig = async (cliVersion: SupportedVersions, deplo
 }
 
 export function urlForHttpServer(httpServer: Server): string {
-    const { address, port } = httpServer.address() as AddressInfo;
+    const {address, port} = httpServer.address() as AddressInfo;
 
     // Convert IPs which mean "any address" (IPv4 or IPv6) into localhost
     // corresponding loopback ip. Note that the url field we're setting is

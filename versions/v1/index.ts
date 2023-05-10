@@ -16,6 +16,7 @@ import * as http from "http";
 import {blue} from "colors/safe";
 import runner from "../../shared/custom-spinner";
 import { sleepAwait } from "sleep-await";
+import FormData from "form-data";
 
 const MD_PATH = path.resolve(process.cwd(), ".satsuma.json");
 
@@ -38,16 +39,10 @@ const v1: CliVersion = {
         });
     },
     deploy: async (args) => {
-
         validateFiles();
         await validateExports();
         const deployKey = args.deployKey || getDeployKey(MD_PATH);
         const md = await getMetadata(MD_PATH);
-
-        const spinner = ora({
-            text: "Deploying",
-            spinner: spinners.moon,
-        }).start();
 
         const cliData = await getSatsumaMetadata(
             SupportedVersions.v1,
@@ -56,26 +51,48 @@ const v1: CliVersion = {
             deployKey
         );
         if (!cliData) {
-            spinner.fail(); // The error message is logged in getSatsumaMetadata
             return;
         }
 
-        const {resolverFile, typeDefsFile, helpersFile} =
+        const formData = new FormData();
+        if (args.subgraphName) {
+            formData.append("subgraph", args.subgraphName);
+        }
+        if (args.versionName) {
+            formData.append("version_name", args.versionName);
+        }
+
+        const {resolverFile, typeDefsFile, helpersFile, schemaFile} =
             await loadCustomerCode();
-        const downloadedFiles: DownloadedFile[] = (
-            [resolverFile, typeDefsFile, helpersFile].filter(Boolean) as string[]
-        ).map((file) => ({
-            fileName: path.basename(file),
-            fileContents: fs.readFileSync(file, "utf8"),
-        }));
+
+        (
+            [
+                path.resolve(process.cwd(), ".satsuma.json"),
+                resolverFile,
+                typeDefsFile,
+                helpersFile,
+                schemaFile
+            ].filter(Boolean) as string[]
+        ).forEach((file) => {
+            formData.append(path.basename(file), fs.createReadStream(file), path.basename(file));
+        });
+
+        const spinner = ora({
+            text: "Deploying",
+            spinner: spinners.moon,
+        }).start();
 
         try {
-            await axios.post("https://app.satsuma.xyz/api/cli/upload", {
-                files: downloadedFiles,
+            await axios.post("http://localhost:3001/api/satsuma-query/deploy", formData, {
+                headers: {
+                    Authorization: `Bearer ${deployKey}`,
+                    ...formData.getHeaders()
+                },
             });
             spinner.succeed("Uploaded files successfully");
         } catch (error) {
             spinner.fail("Error uploading files");
+            console.log(error);
             process.exit(1);
         }
     },

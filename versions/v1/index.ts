@@ -163,7 +163,6 @@ const v1: CliVersion = {
                 spinner = ora({text: `${reload ? "Loading" : "Reloading"} code`, spinner: spinners.moon}).start();
                 const {databases, graphql} = cliData;
                 const {typeDefs, resolvers, helpers} = await loadCustomerCode();
-                console.log({typeDefs, resolvers, helpers});
                 const config: CreateServerConfig = {
                     databases,
                     graphql,
@@ -191,7 +190,7 @@ const v1: CliVersion = {
         }
 
         const fileChangedHandler = (fileName: string) => async (curr: fs.Stats, prev: fs.Stats) => {
-            console.log(`\n${fileName} file changed`);
+            ora(`${fileName} file changed`).info();
             await shutdownServer();
             await startServer();
         };

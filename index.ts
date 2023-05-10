@@ -1,4 +1,4 @@
-#!/usr/bin/env -S npx ts-node --transpile-only --files -r tsconfig-paths/register
+#!/usr/bin/env -S npx ts-node --transpile-only --files
 
 import * as fs from 'fs';
 import * as yargs from 'yargs';

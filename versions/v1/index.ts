@@ -83,9 +83,9 @@ const v1: CliVersion = {
         }).start();
 
         try {
-            await axios.post("http://localhost:3001/api/satsuma-query/deploy", formData, {
+            await axios.post("https://app.satsuma.xyz/api/satsuma-query/deploy", formData, {
                 headers: {
-                    Authorization: `Bearer ${deployKey}`,
+                    'x-api-key': deployKey,
                     ...formData.getHeaders()
                 },
             });

@@ -36,12 +36,11 @@ export const getSatsumaMetadata = async (cliVersion: SupportedVersions, subgraph
     }
 
     try {
-        const headers: AxiosRequestHeaders['headers'] = {
-            Authorization: `Bearer ${deployKey}`
-        };
         const url = `https://app.satsuma.xyz/api/cli/data?${stringify({subgraphName, versionName, cliVersion})}`
         const result = await axios.get(url, {
-            headers
+            headers: {
+                'x-api-key': deployKey,
+            }
         });
 
         if (isErrorResponse(result.data)) {

@@ -18,22 +18,31 @@ export const loadCustomerCode = async () => {
   const resolverFile = getFilePath("resolvers.ts");
   let resolvers = {};
   try {
+      try {
+          delete require.cache[require.resolve(resolverFile)];
+      } catch (err) { }
     resolvers = (await import(resolverFile)).resolvers;
   } catch {
-    // Do nothing.
   }
+
   const typeDefsFile = getFilePath("typeDefs.ts");
   let typeDefs = "";
   try {
+      try {
+          delete require.cache[require.resolve(typeDefsFile)];
+      } catch (err) { }
     typeDefs = (await import(typeDefsFile)).typeDefs;
   } catch {
-    // Do nothing.
   }
+
   let helpersFile: string | undefined = getFilePath(
     "helpers.ts"
   );
   let helpers = {};
   try {
+      try {
+          delete require.cache[require.resolve(helpersFile)];
+      } catch (err) { }
     helpers = (await import(helpersFile)).helpers;
   } catch {
     helpersFile = undefined;

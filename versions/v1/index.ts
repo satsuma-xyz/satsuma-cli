@@ -14,6 +14,8 @@ import {download} from "../../shared/helpers/download-repo";
 import {CliVersion, SupportedVersions} from "../../shared/types";
 import * as http from "http";
 import {blue} from "colors/safe";
+import runner from "../../shared/custom-spinner";
+import { sleepAwait } from "sleep-await";
 
 const MD_PATH = path.resolve(process.cwd(), ".satsuma.json");
 
@@ -133,22 +135,26 @@ const v1: CliVersion = {
 
         let server: http.Server;
 
-        const shutdownServer = () => {
-            return new Promise<void>(async (resolve) => {
-                spinner.text = 'Shutting down server...';
+        const shutdownServer = (reason = "Server shut down") => {
+            return new Promise<void>((resolve) => {
                 if (server) {
+                    spinner.text = "Shutting down server";
+
+                    // We need to set the timeout super low to force all connections to end instantly.
+                    server.timeout = 1;
+                    server.removeAllListeners();
                     server.close(() => {
-                        spinner.info("Server shut down");
+                        spinner.info(reason);
                         resolve();
                     });
                 } else {
-                    spinner.info("Server shut down");
+                    spinner.info(reason);
+                    resolve();
                 }
-                resolve();
             });
         };
 
-        const {resolverFile, typeDefsFile, helpersFile} = await loadCustomerCode();
+        let {resolverFile, typeDefsFile, helpersFile} = await loadCustomerCode();
 
         process.on('SIGINT', () => {
             shutdownServer().then(() => process.exit(0));
@@ -160,9 +166,10 @@ const v1: CliVersion = {
 
         const startServer = async (reload = false) => {
             try {
-                spinner = ora({text: `${reload ? "Loading" : "Reloading"} code`, spinner: spinners.moon}).start();
+                spinner = ora({text: `${reload ? "Reloading" : "Loading"} code`, spinner: spinners.moon}).start();
+                await sleepAwait(3000)
                 const {databases, graphql} = cliData;
-                const {typeDefs, resolvers, helpers} = await loadCustomerCode();
+                const {typeDefs, resolvers, helpers, resolverFile, typeDefsFile, helpersFile} = await loadCustomerCode();
                 const config: CreateServerConfig = {
                     databases,
                     graphql,
@@ -170,15 +177,16 @@ const v1: CliVersion = {
                     typeDefsFile,
                     helpersFile,
                 };
-                spinner.succeed();
 
                 const reservedServer = await createStandaloneServer(config, typeDefs, resolvers, helpers);
                 server = reservedServer.httpServer;
 
-                return new Promise(async (resolve,) => {
+                return new Promise<void>(async (resolve,) => {
+                    // Never actually resolves, in order to keep the process alive
+                    spinner.succeed();
                     spinner = ora({
                         text: 'Starting server',
-                        spinner: spinners.runner
+                        spinner: runner
                     }).start();
 
                     await server.listen(4000);
@@ -190,9 +198,8 @@ const v1: CliVersion = {
         }
 
         const fileChangedHandler = (fileName: string) => async (curr: fs.Stats, prev: fs.Stats) => {
-            ora(`${fileName} file changed`).info();
-            await shutdownServer();
-            await startServer();
+            await shutdownServer(`${fileName} file changed`);
+            await startServer(true);
         };
         fs.watchFile(resolverFile, fileChangedHandler(resolverFile));
         fs.watchFile(typeDefsFile, fileChangedHandler(typeDefsFile));

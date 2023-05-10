@@ -9,4 +9,4 @@ console.log("running ts-node dir:", __dirname, process.argv.slice(2).join(" "));
 const location = path.resolve(__dirname, "run.ts");
 console.log("running ts-node", location, process.argv.slice(2).join(" "));
 
-child_process.execSync(`npx --yes ts-node ${location} ` + process.argv.slice(2).join(" "));
+child_process.execSync(`npx --yes ts-node --esModuleInterop ${location} ` + process.argv.slice(2).join(" "));

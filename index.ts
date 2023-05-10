@@ -1,4 +1,4 @@
-#!/usr/bin/env -S node -r "ts-node/register" --module=commonjs
+#!/usr/bin/env -S node -r "ts-node/register"
 
 import * as fs from 'fs';
 import * as yargs from 'yargs';

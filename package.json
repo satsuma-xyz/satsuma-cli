@@ -10,7 +10,7 @@
     "ipfs",
     "graphql"
   ],
-  "main": "./index.js",
+  "main": "./run.js",
   "dependencies": {
     "@apollo/server": "^4.7.0",
     "@graphql-codegen/client-preset": "^3.0.1",

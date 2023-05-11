@@ -1,4 +1,7 @@
-#!/usr/bin/env -S npx ts-node --transpile-only --files
+#!/usr/bin/env -S npx ts-node --project tsconfig.json --transpile-only --files --no-warnings
+
+// Keep this one at the top to suppress warnings about fetch API
+import 'suppress-experimental-warnings';
 
 import * as fs from 'fs';
 import * as yargs from 'yargs';

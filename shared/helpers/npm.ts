@@ -3,13 +3,19 @@ import * as colors from "colors/safe";
 import * as fs from "fs";
 import * as path from "path";
 
+export const getCurrentPackage = () => {
+    const packageJsonRaw = fs
+        .readFileSync(path.join(__dirname, "../../package.json"))
+        .toString();
+    const packageJson = JSON.parse(packageJsonRaw);
+    return {
+      packageName: packageJson.name,
+      currentVersion: packageJson.version,
+    };
+}
+
 export const checkForNpmUpdates = async (silent = false): Promise<boolean> => {
-  const packageJsonRaw = fs
-    .readFileSync(path.join(__dirname, "../../package.json"))
-    .toString();
-  const packageJson = JSON.parse(packageJsonRaw);
-  const packageName = packageJson.name;
-  const currentVersion = packageJson.version;
+  const { packageName, currentVersion } = getCurrentPackage();
 
   try {
     const response = await axios.get(

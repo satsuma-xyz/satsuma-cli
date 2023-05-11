@@ -7,10 +7,9 @@ import {getFilePath} from "./utils";
 export const checkProjectNotExists = () => {
   // Check if .satsuma.json exists in cwd
   if (fs.existsSync(path.resolve(process.cwd(), ".satsuma.json"))) {
-    console.error(
+    throw new Error(
       "Project already exists in this directory. You must remove `.satsuma.json` before initializing"
     );
-    process.exit(1);
   }
 };
 
@@ -24,26 +23,26 @@ export const validateFiles = () => {
   const resolversExist = fs.existsSync(resolversPath);
 
   if (!satsumaJsonExist && !satsumaJsonExist) {
-    console.error(
+    ora().fail(
       "No .satsuma.json metadata found. Please run `init` to get started"
     );
     process.exit(1);
   }
 
   if (!typeDefsExist && !resolversExist) {
-    console.error(
+    ora().fail(
       "No graphql types or resolvers found. Please run `init` to get started"
     );
     process.exit(1);
   }
 
   if (!resolversExist) {
-    console.error("Missing resolvers. Please run `init` to get started");
+    ora().fail("Missing resolvers. Please run `init` to get started");
     process.exit(1);
   }
 
   if (!typeDefsExist) {
-    console.error("Missing graphql types. Please run `init` to get started");
+    ora().fail("Missing graphql types. Please run `init` to get started");
     process.exit(1);
   }
 };

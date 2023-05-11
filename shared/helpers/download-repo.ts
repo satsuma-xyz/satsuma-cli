@@ -40,7 +40,14 @@ export const download = async (
     }
 ) => {
     if (!reset) {
-        checkProjectNotExists();
+        try {
+            checkProjectNotExists();
+        } catch (e) {
+            if (spinner) {
+                spinner.fail((e as Error).message);
+            }
+            process.exit(1);
+        }
     }
 
 

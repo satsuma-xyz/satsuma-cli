@@ -8,7 +8,7 @@ import * as yargs from 'yargs';
 import v1Cli from './versions/v1';
 import {run} from "./shared/helpers/cli";
 import {CliVersion, InitArgs, RunServerArgs, SupportedVersions, WithSubgraphData} from "./shared/types";
-import {checkForNpmUpdates} from "./shared/helpers/npm";
+import {checkForNpmUpdates, getCurrentPackage} from "./shared/helpers/npm";
 import * as child_process from "child_process";
 
 const versions: Record<SupportedVersions, CliVersion> = {
@@ -99,7 +99,8 @@ const cliOptions = yargs
 
 if (require.main === module) {
     run(async () => {
-        console.log("🍊 Satsuma CLI version:", NEWEST_VERSION);
+        const { currentVersion } = getCurrentPackage();
+        console.log(`🍊 Satsuma CLI version ${currentVersion}. Project Version: ${cliOptions.cliVersion}.`);
 
         const cmd = cliOptions._[0];
 

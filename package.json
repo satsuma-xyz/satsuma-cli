@@ -52,7 +52,10 @@
     "ts-jest": "^29.1.0",
     "typescript": "^5.0.4"
   },
-  "bin": "./index.js",
+  "bin": {
+    "cli": "./index.js",
+    "satsuma": "satsuma"
+  },
   "scripts": {
     "satsuma": "npx ts-node index.ts",
     "build": "npx tsc index.ts --esModuleInterop && chmod 755 index.js",

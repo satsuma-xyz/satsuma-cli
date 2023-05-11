@@ -1,4 +1,4 @@
-#!/usr/bin/env -S echo "dir:" && echo "$(dirname "$0")/tsconfig.json" && npx ts-node --project "$(dirname "$0")/tsconfig.json" --transpile-only --files
+#!/usr/bin/env -S npx ts-node --project "$(dirname "$0")/tsconfig.json" --transpile-only --files
 
 // Keep this one at the top to suppress warnings about fetch API
 import 'suppress-experimental-warnings';

@@ -35,14 +35,18 @@ const v1: CliVersion = {
         await download({
             versionFolder: SupportedVersions.v1,
             spinner,
-            reset: Boolean(args.reset)
+            reset: Boolean(args.reset),
+            projectPathPrefix: args.projectPathPrefix,
+            repoOwner: args.repoOwner,
+            repoName: args.repoName,
+            branch: args.branch,
+            metadataFile: args.metadataFile,
         });
     },
     deploy: async (args) => {
         validateFiles();
         await validateExports();
         const deployKey = args.deployKey || getDeployKey(MD_PATH);
-        const md = await getMetadata(MD_PATH);
 
         const cliData = await getSatsumaMetadata(
             SupportedVersions.v1,

@@ -1,3 +1,5 @@
 #!/bin/bash
 DIR=$(dirname "$0")
 exec npx ts-node --project "$DIR/../@satsuma/cli/tsconfig.json" --transpile-only --files "$@"
+
+# This only works if run via npm

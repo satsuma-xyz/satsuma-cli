@@ -1,4 +1,4 @@
-#!/usr/bin/env -S npx ts-node --project "$(dirname $0)/tsconfig.json" --transpile-only --files
+#!/usr/bin/env satsuma
 
 // Keep this one at the top to suppress warnings about fetch API
 import 'suppress-experimental-warnings';

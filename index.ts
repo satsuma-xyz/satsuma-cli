@@ -159,12 +159,12 @@ if (require.main === module) {
             case 'selfupdate':
                 const onCurrentVersion = await checkForNpmUpdates(true);
                 if (onCurrentVersion){
-                    ora('Satsuma CLI is already up to date!').succeed();
+                    ora().succeed('Satsuma CLI is already up to date!');
                     return;
                 }
 
                 let { currentVersion } = getCurrentPackage();
-                const spinner = ora({text: `Updating Satsuma CLI from ${currentVersion}...`}).start();
+                const spinner = ora({text: `Updating Satsuma CLI from ${currentVersion}...`, spinner: "moon"}).start();
                 try {
                     await util.promisify(exec)('npx --yes clear-npx-cache; npx --yes @satsuma/cli ignore', {shell: '/bin/bash'});
                     currentVersion = getCurrentPackage().currentVersion;

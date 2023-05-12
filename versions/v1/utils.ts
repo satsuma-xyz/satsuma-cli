@@ -1,7 +1,6 @@
 import * as path from "path";
 import * as fs from "fs";
 import {getSatsumaMetadata} from "../../shared/helpers/auth";
-import {CreateServerConfig, Database} from "@satsuma/codegen/versions/v1/template/types";
 
 import {getMetadata} from "../../shared/helpers/metadata";
 import type {Server} from 'http';

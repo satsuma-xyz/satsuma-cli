@@ -4,18 +4,17 @@ import {getSatsumaMetadata} from "../../shared/helpers/auth";
 import {CreateServerConfig} from "@satsuma/codegen/versions/v1/template/types";
 import {loadCustomerCode, satsumaMetadataConfig, urlForHttpServer} from "./utils";
 import {validateExports, validateFiles} from "./validations";
-import {getCustomQueryPath, getDeployKey, getMetadata} from "../../shared/helpers/metadata";
+import {getCustomQueryPath, getDeployKey} from "../../shared/helpers/metadata";
 import * as path from "path";
 import * as fs from "fs";
 import axios from "axios";
-import spinners from "cli-spinners";
 import ora from "ora";
 import {download} from "../../shared/helpers/download-repo";
 import {CliVersion, SupportedVersions} from "../../shared/types";
 import * as http from "http";
 import {blue} from "colors/safe";
 import runner from "../../shared/custom-spinner";
-import { sleepAwait } from "sleep-await";
+import {sleepAwait} from "sleep-await";
 import FormData from "form-data";
 
 const MD_PATH = path.resolve(process.cwd(), ".satsuma.json");
@@ -29,7 +28,7 @@ const v1: CliVersion = {
     init: async (args) => {
         const spinner = ora({
             text: 'Downloading files',
-            spinner: spinners.moon
+            spinner: "moon"
         }).start();
 
         await download({
@@ -83,7 +82,7 @@ const v1: CliVersion = {
 
         const spinner = ora({
             text: "Deploying",
-            spinner: spinners.moon,
+            spinner: "moon",
         }).start();
 
         try {
@@ -105,7 +104,7 @@ const v1: CliVersion = {
         await validateExports();
         const spinner = ora({
             text: 'Validating',
-            spinner: spinners.moon
+            spinner: "moon"
         });
 
         const deployKey = args.deployKey || getDeployKey(MD_PATH);
@@ -142,7 +141,7 @@ const v1: CliVersion = {
         validateFiles();
         await validateExports();
         let spinner = ora({
-            spinner: spinners.moon
+            spinner: "moon"
         });
         const deployKey = args.deployKey || getDeployKey(MD_PATH);
 
@@ -187,7 +186,7 @@ const v1: CliVersion = {
 
         const startServer = async (reload = false) => {
             try {
-                spinner = ora({text: `${reload ? "Reloading" : "Loading"} code`, spinner: spinners.moon}).start();
+                spinner = ora({text: `${reload ? "Reloading" : "Loading"} code`, spinner: "moon"}).start();
                 await sleepAwait(3000)
                 const {databases, graphql} = cliData;
                 const {typeDefs, resolvers, helpers, resolverFile, typeDefsFile, helpersFile} = await loadCustomerCode();

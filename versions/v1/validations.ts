@@ -1,4 +1,3 @@
-import spinners from "cli-spinners";
 import * as fs from "fs";
 import ora from "ora";
 import * as path from "path";
@@ -53,7 +52,7 @@ export const validateExports = async () => {
 
   let spinner = ora({
     text: "Checking Resolvers",
-    spinner: spinners.moon,
+    spinner: "moon",
   }).start();
   try {
     if ((await import(resolverPath)).resolvers === undefined) {
@@ -71,7 +70,7 @@ export const validateExports = async () => {
 
   spinner = ora({
     text: "Checking Typedefs",
-    spinner: spinners.moon,
+    spinner: "moon",
   }).start();
 
   const typeDefsPath = getFilePath("typeDefs");
@@ -92,7 +91,7 @@ export const validateExports = async () => {
 
   spinner = ora({
     text: "Checking helpers",
-    spinner: spinners.moon,
+    spinner: "moon",
   }).start();
   const helpersPath = getFilePath("helpers");
   try {

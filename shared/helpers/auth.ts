@@ -1,5 +1,5 @@
 import {getMetadata} from "./metadata";
-import axios, {AxiosRequestHeaders} from "axios";
+import axios from "axios";
 import {stringify} from "query-string";
 import colors from 'colors/safe';
 import ora from "ora";

@@ -57,47 +57,50 @@ const cliOptions = yargs
         type: "string",
         demandOption: false,
     })
+    .option("subgraphName", {
+        describe: "The name of the subgraph",
+        type: "string",
+        demandOption: false,
+    })
+    .option("versionName", {
+        describe: "The name of the version you want to deploy to",
+        type: "string",
+        demandOption: false,
+    })
     .command({
         command: "init",
         describe: "Initialize the satsuma project",
-        handler: () => {
-        },
+        handler: () => {},
     })
     .command({
         command: "deploy",
         describe: "Deploy to Satsuma.xyz 🍊",
-        handler: () => {
-        },
+        handler: () => {},
     })
     .command({
         command: "validate",
         describe: "Validate your custom queries.",
-        handler: () => {
-        },
+        handler: () => {},
     })
     .command({
         command: "local",
         describe: "Run a local graphql server.",
-        handler: () => {
-        },
+        handler: () => {},
     })
     .command({
         command: "codegen",
         describe: "Generate the graphql schema & types.",
-        handler: () => {
-        },
+        handler: () => {},
     })
     .command({
         command: "ignore",
         describe: "",
-        handler: () => {
-        },
+        handler: () => {},
     })
     .command({
         command: "selfupdate",
         describe: "Update the Satsuma CLI",
-        handler: () => {
-        },
+        handler: () => {},
     })
     .parseSync();
 

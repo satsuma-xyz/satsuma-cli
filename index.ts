@@ -9,9 +9,11 @@ import v1Cli from './versions/v1';
 import {run} from "./shared/helpers/cli";
 import {CliVersion, InitArgs, RunServerArgs, SupportedVersions, WithSubgraphData} from "./shared/types";
 import {checkForNpmUpdates, getCurrentPackage} from "./shared/helpers/npm";
-import * as child_process from "child_process";
+import { exec } from 'child_process';
+import * as util from 'util';
 import ora from "ora";
 import spinners from "cli-spinners";
+import {sleepAwait} from "sleep-await";
 
 const versions: Record<SupportedVersions, CliVersion> = {
     [SupportedVersions.v1]: v1Cli,
@@ -162,12 +164,9 @@ if (require.main === module) {
                 }
 
                 let { currentVersion } = getCurrentPackage();
-                const spinner = ora({text: `Updating Satsuma CLI from ${currentVersion}...`, spinner: spinners.moon}).start();
+                const spinner = ora({text: `Updating Satsuma CLI from ${currentVersion}...`}).start();
                 try {
-                    child_process.execSync('npx --yes clear-npx-cache; npx --yes @satsuma/cli ignore', {
-                        shell: '/bin/bash',
-                        stdio: 'pipe'
-                    });
+                    await util.promisify(exec)('npx --yes clear-npx-cache; npx --yes @satsuma/cli ignore', {shell: '/bin/bash'});
                     currentVersion = getCurrentPackage().currentVersion;
                     spinner.succeed(`Updated Satsuma CLI to ${currentVersion}!`);
                 } catch {

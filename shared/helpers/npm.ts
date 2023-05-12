@@ -14,6 +14,11 @@ export const getCurrentPackage = () => {
     };
 }
 
+/**
+ * Checks if there's a newer version of the CLI available.
+ * @returns {Promise<boolean>} Whether or not the CLI is up to date.
+ * @param silent
+ */
 export const checkForNpmUpdates = async (silent = false): Promise<boolean> => {
   const { packageName, currentVersion } = getCurrentPackage();
 

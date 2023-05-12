@@ -25,7 +25,7 @@ const isErrorResponse = (
   return (response as ErrorResponse).message !== undefined;
 };
 
-export const getSatsumaMetadata = async (cliVersion: SupportedVersions, subgraphName?: string, versionName?: string, deployKey?: string): Promise<SatsumaMetadata | undefined> => {
+export const getSatsumaMetadata = async (cliVersion: SupportedVersions, subgraphName?: string, versionName?: string, deployKey?: string, cliDataEndpoint = "https://app.satsuma.xyz/api/cli/data"): Promise<SatsumaMetadata | undefined> => {
     const spinner = ora({text: 'Fetching data from Satsuma API', spinner: "moon"}).start();
 
     if (!deployKey) {
@@ -36,7 +36,7 @@ export const getSatsumaMetadata = async (cliVersion: SupportedVersions, subgraph
     }
 
     try {
-        const url = `https://app.satsuma.xyz/api/cli/data?${stringify({subgraphName, versionName, cliVersion})}`
+        const url = `${cliDataEndpoint}?${stringify({subgraphName, versionName, cliVersion})}`
         const result = await axios.get(url, {
             headers: {
                 'x-api-key': deployKey,

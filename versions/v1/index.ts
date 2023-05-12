@@ -235,7 +235,7 @@ const v1: CliVersion = {
         const {resolverFile, typeDefsFile, helpersFile} = await loadCustomerCode();
         const outputPath = getCustomQueryPath(MD_PATH);
         const deployKey = args.deployKey || getDeployKey(MD_PATH);
-        const cliData = await satsumaMetadataConfig(SupportedVersions.v1, deployKey, args.subgraphName, args.versionName);
+        const cliData = await satsumaMetadataConfig(SupportedVersions.v1, deployKey, args.subgraphName, args.versionName, args.cliDataEndpoint);
         if (!cliData) {
             return;
         }

@@ -14,6 +14,7 @@ export type WithSubgraphData = CliFnArgs & {
     deployKey: string
     subgraphName?: string;
     versionName?: string;
+    cliDataEndpoint?: string;
 }
 
 export type RunServerArgs = WithSubgraphData & {

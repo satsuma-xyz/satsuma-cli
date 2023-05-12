@@ -64,8 +64,8 @@ export const loadCustomerCode = async () => {
     }
 }
 
-export const satsumaMetadataConfig = async (cliVersion: SupportedVersions, deployKey: string, subgraphName?: string, versionName?: string) => {
-    const cliData = await getSatsumaMetadata(cliVersion, subgraphName, versionName, deployKey);
+export const satsumaMetadataConfig = async (cliVersion: SupportedVersions, deployKey: string, subgraphName?: string, versionName?: string, cliDataEndpoint?: string) => {
+    const cliData = await getSatsumaMetadata(cliVersion, subgraphName, versionName, deployKey, cliDataEndpoint);
     if (!cliData) {
         return;
     }

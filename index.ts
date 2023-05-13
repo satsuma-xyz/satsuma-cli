@@ -67,6 +67,11 @@ const cliOptions = yargs
         type: "string",
         demandOption: false,
     })
+    .option("debug", {
+        describe: "Enable debug mode",
+        type: "boolean",
+        demandOption: false,
+    })
     .command({
         command: "init",
         describe: "Initialize the satsuma project",

@@ -110,7 +110,7 @@ const v1: CliVersion = {
         const deployKey = args.deployKey || getDeployKey(MD_PATH);
 
         spinner.text = "Getting metadata";
-        const cliData = await satsumaMetadataConfig(SupportedVersions.v1, deployKey, args.subgraphName, args.versionName);
+        const cliData = await satsumaMetadataConfig(SupportedVersions.v1, deployKey, args.subgraphName, args.versionName, args.cliDataEndpoint, args.debug);
         if (!cliData) {
             spinner.fail();
             return;
@@ -146,7 +146,7 @@ const v1: CliVersion = {
         const deployKey = args.deployKey || getDeployKey(MD_PATH);
 
         spinner.text = "Getting metadata";
-        const cliData = await satsumaMetadataConfig(SupportedVersions.v1, deployKey, args.subgraphName, args.versionName);
+        const cliData = await satsumaMetadataConfig(SupportedVersions.v1, deployKey, args.subgraphName, args.versionName, args.cliDataEndpoint, args.debug);
         if (!cliData) {
             spinner.fail();
             return;
@@ -198,7 +198,7 @@ const v1: CliVersion = {
                     helpersFile,
                 };
 
-                const reservedServer = await createStandaloneServer(config, typeDefs, resolvers, helpers);
+                const reservedServer = await createStandaloneServer(config, typeDefs, resolvers, helpers, args.debug);
                 server = reservedServer.httpServer;
 
                 return new Promise<void>(async (resolve,) => {
@@ -235,7 +235,7 @@ const v1: CliVersion = {
         const {resolverFile, typeDefsFile, helpersFile} = await loadCustomerCode();
         const outputPath = getCustomQueryPath(MD_PATH);
         const deployKey = args.deployKey || getDeployKey(MD_PATH);
-        const cliData = await satsumaMetadataConfig(SupportedVersions.v1, deployKey, args.subgraphName, args.versionName, args.cliDataEndpoint);
+        const cliData = await satsumaMetadataConfig(SupportedVersions.v1, deployKey, args.subgraphName, args.versionName, args.cliDataEndpoint, args.debug);
         if (!cliData) {
             return;
         }

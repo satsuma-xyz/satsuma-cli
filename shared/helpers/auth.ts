@@ -44,25 +44,25 @@ export const getSatsumaMetadata = async (cliVersion: SupportedVersions, subgraph
         });
 
         if (isErrorResponse(result.data)) {
-            spinner.fail("Error response from Satsuma API:")
+            spinner.fail("Error response from Satsuma API:");
             console.log(colors.red(result.data.message))
             if (result.data.availableSubgraphs) {
-                console.log("- Available subgraphs:")
+                console.log("- Available subgraphs:");
                 for (const subgraph of result.data.availableSubgraphs) {
                     console.log("\t-", subgraph)
                 }
             }
             if (result.data.availableVersions) {
-                console.log("- Available subgraph versions:")
+                console.log("- Available subgraph versions:");
                 for (const version of result.data.availableVersions) {
-                    console.log("\t-", version)
+                    console.log("\t-", version);
                 }
             }
 
             return;
         }
 
-        spinner.succeed()
+        spinner.succeed();
         return result.data;
     } catch (e) {
         console.error(e);

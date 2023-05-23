@@ -57,12 +57,12 @@ const cliOptions = yargs
         type: "string",
         demandOption: false,
     })
-    .option("subgraphName", {
+    .option("subgraph-name", {
         describe: "The name of the subgraph",
         type: "string",
         demandOption: false,
     })
-    .option("versionName", {
+    .option("version-name", {
         describe: "The name of the version you want to deploy to",
         type: "string",
         demandOption: false,

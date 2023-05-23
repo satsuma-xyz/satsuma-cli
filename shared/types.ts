@@ -1,4 +1,4 @@
-import { CreateServerConfig } from "@satsuma/codegen/versions/v1/template/types";
+import { CreateServerConfig } from "@satsuma/codegen/versions/v1/types";
 
 export interface CliFnArgs {
   cliVersion: string;

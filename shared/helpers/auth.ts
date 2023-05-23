@@ -3,7 +3,7 @@ import axios from "axios";
 import {stringify} from "query-string";
 import colors from 'colors/safe';
 import ora from "ora";
-import {Database, GraphQLServer} from "@satsuma/codegen/versions/v1/template/types";
+import {Database, GraphQLServer} from "@satsuma/codegen/versions/v1/types";
 import {SupportedVersions} from "../types";
 
 interface SatsumaMetadata {

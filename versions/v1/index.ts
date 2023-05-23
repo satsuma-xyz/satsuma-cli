@@ -1,7 +1,7 @@
 import v1Codegen from "@satsuma/codegen/versions/v1";
-import {createApolloServer, createStandaloneServer} from "@satsuma/codegen/versions/v1/template/server";
+import {createApolloServer, createStandaloneServer} from "@satsuma/codegen/versions/v1/server";
 import {getSatsumaMetadata} from "../../shared/helpers/auth";
-import {CreateServerConfig} from "@satsuma/codegen/versions/v1/template/types";
+import {CreateServerConfig} from "@satsuma/codegen/versions/v1/types";
 import {loadCustomerCode, satsumaMetadataConfig, urlForHttpServer} from "./utils";
 import {validateExports, validateFiles} from "./validations";
 import {getCustomQueryPath, getDeployKey} from "../../shared/helpers/metadata";

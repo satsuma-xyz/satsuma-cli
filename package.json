@@ -13,7 +13,7 @@
   "main": "./index.js",
   "dependencies": {
     "@apollo/server": "^4.7.0",
-    "@satsuma/codegen": "^1.3.39",
+    "@satsuma/codegen": "^1.3.40",
     "await-sleep": "^0.0.1",
     "axios": "^1.3.6",
     "cli-spinners": "^2.8.0",

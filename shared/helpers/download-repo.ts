@@ -122,7 +122,6 @@ export const download = async (
                             .on("close", () => {
                                 addMetadata(metadataFile, {
                                     version: versionFolder,
-                                    downloadedFiles: downloadedFiles,
                                     projectPathPrefix
                                 });
                                 fs.unlinkSync(TEMP_ZIP_FILE);

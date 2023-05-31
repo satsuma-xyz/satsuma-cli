@@ -181,6 +181,8 @@ if (require.main === module) {
                     spinner.fail(`Error!`);
                 }
                 break;
+            default:
+                throw new Error(`Unsupported command: ${cmd}`);
         }
     });
 }

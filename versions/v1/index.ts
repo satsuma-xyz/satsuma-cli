@@ -209,7 +209,6 @@ const v1: CliVersion = {
                     helpersFile,
                 };
 
-                console.log("Creating standalone server", {gqlSchema});
                 const reservedServer = await createStandaloneServer(config, gqlSchema, resolvers, helpers, args.debug);
                 server = reservedServer.httpServer;
 

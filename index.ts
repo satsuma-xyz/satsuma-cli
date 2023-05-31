@@ -182,7 +182,8 @@ if (require.main === module) {
                 }
                 break;
             default:
-                throw new Error(`Unsupported command: ${cmd}`);
+                ora(`Unsupported command: ${cmd}`).fail();
+                return;
         }
     });
 }

@@ -37,6 +37,17 @@ export const loadCustomerCode = async () => {
     } catch {
     }
 
+    const gqlSchemaFile = getFilePath("schema.graphql");
+    let gqlSchema = "";
+    try {
+        try {
+            gqlSchema = fs.readFileSync(gqlSchemaFile, "utf-8");
+        } catch (err) {
+        }
+        gqlSchema = (await import(typeDefsFile)).typeDefs;
+    } catch {
+    }
+
     let helpersFile: string | undefined = getFilePath(
         "helpers.ts"
     );
@@ -60,7 +71,8 @@ export const loadCustomerCode = async () => {
 
     return {
         resolvers, typeDefs, helpers,
-        resolverFile, typeDefsFile, helpersFile, schemaFile
+        resolverFile, typeDefsFile, helpersFile, schemaFile,
+        gqlSchema, gqlSchemaFile
     }
 }
 

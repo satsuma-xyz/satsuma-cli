@@ -175,6 +175,7 @@ const v1: CliVersion = {
         };
 
         let {resolverFile, typeDefsFile, helpersFile} = await loadCustomerCode();
+        const outputPath = getCustomQueryPath(MD_PATH);
 
         process.on('SIGINT', () => {
             shutdownServer().then(() => process.exit(0));
@@ -189,7 +190,17 @@ const v1: CliVersion = {
                 spinner = ora({text: `${reload ? "Reloading" : "Loading"} code`, spinner: "moon"}).start();
                 await sleepAwait(3000)
                 const {databases, graphql} = cliData;
-                const {typeDefs, resolvers, helpers, resolverFile, typeDefsFile, helpersFile} = await loadCustomerCode();
+                const {typeDefs, resolvers, helpers, resolverFile, typeDefsFile, helpersFile, gqlSchema} = await loadCustomerCode();
+
+                await v1Codegen.types({
+                    ...cliData,
+                    resolverFile,
+                    typeDefsFile,
+                    helpersFile,
+                    outputPath,
+                });
+                ora().succeed(`Generated gQL schema at ${blue(`${outputPath}schema.graphql`)}`);
+
                 const config: CreateServerConfig = {
                     databases,
                     graphql,
@@ -198,7 +209,7 @@ const v1: CliVersion = {
                     helpersFile,
                 };
 
-                const reservedServer = await createStandaloneServer(config, typeDefs, resolvers, helpers, args.debug);
+                const reservedServer = await createStandaloneServer(config, gqlSchema, resolvers, helpers, args.debug);
                 server = reservedServer.httpServer;
 
                 return new Promise<void>(async (resolve,) => {

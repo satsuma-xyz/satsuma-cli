@@ -27,7 +27,6 @@
     "typescript": "^5.0.4",
     "uninstall": "^0.0.0",
     "unzipper": "^0.10.11",
-    "vm2": "^3.9.17",
     "yargs": "^17.0.1"
   },
   "devDependencies": {
